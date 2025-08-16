@@ -169,12 +169,10 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
             onClick={openFileDialog}
             className="btn-primary"
             style={{
-              background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              fontSize: '16px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              fontSize: '16px'
             }}
           >
             <Upload style={{ width: '20px', height: '20px' }} />

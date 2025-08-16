@@ -181,7 +181,14 @@ export function ImageCanvas({ image, onColorPick }) {
               alignItems: 'center',
               gap: '8px',
               fontSize: '14px',
-              opacity: isProcessing ? '0.5' : '1'
+              opacity: isProcessing ? '0.5' : '1',
+              ...(filterType === 'simplified' && {
+                background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
+                boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)',
+                borderRadius: '0.5rem',
+                border: 'none',
+                color: 'white'
+              })
             }}
           >
             <Circle style={{ width: '16px', height: '16px' }} />
@@ -196,7 +203,14 @@ export function ImageCanvas({ image, onColorPick }) {
               alignItems: 'center',
               gap: '8px',
               fontSize: '14px',
-              opacity: isProcessing ? '0.5' : '1'
+              opacity: isProcessing ? '0.5' : '1',
+              ...(filterType === 'oil' && {
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+                boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)',
+                borderRadius: '0.5rem',
+                border: 'none',
+                color: 'white'
+              })
             }}
           >
             <Sparkles style={{ width: '16px', height: '16px' }} />
@@ -209,7 +223,14 @@ export function ImageCanvas({ image, onColorPick }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              fontSize: '14px'
+              fontSize: '14px',
+              ...(isEyedropperActive && {
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)',
+                borderRadius: '0.5rem',
+                border: 'none',
+                color: 'white'
+              })
             }}
           >
             <Pipette style={{ width: '16px', height: '16px' }} />
