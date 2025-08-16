@@ -34,7 +34,7 @@ function App() {
             </div>
             <div>
               <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#1e293b' }}>
-                Painter's Guide
+                Painter's Perspective
               </h1>
               <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
                 Professional Color Analysis Tool
