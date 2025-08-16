@@ -41,7 +41,7 @@ function App() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       {/* Header */}
-      <header className="app-header">
+      {/* <header className="app-header">
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ 
@@ -61,21 +61,28 @@ function App() {
             </div>
           </div>
         </div>
-      </header>
+      </header> */}
 
       <main style={{ padding: '32px 0' }}>
         <div className="container">
           {!uploadedImage ? (
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
               {/* Hero Section */}
-              <div className="hero-section">
+              <div className="hero-section" style={{
+                background: 'white',
+                borderRadius: '24px',
+                padding: '48px 32px',
+                marginBottom: '48px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              }}>
                 <div style={{ marginBottom: '24px' }}>
                   <div style={{ 
                     display: 'inline-flex',
                     padding: '16px', 
                     background: 'linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%)', 
                     borderRadius: '16px',
-                    marginBottom: '24px'
+                    marginBottom: '24px',
                   }}>
                     <Brush style={{ width: '48px', height: '48px', color: '#3b82f6' }} />
                   </div>
