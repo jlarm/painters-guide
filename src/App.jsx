@@ -55,7 +55,7 @@ function App() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       {/* Header */}
-      {/* <header className="app-header">
+      <header className="app-header">
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ 
@@ -75,7 +75,7 @@ function App() {
             </div>
           </div>
         </div>
-      </header> */}
+      </header>
 
       <main style={{ padding: '32px 0' }}>
         <div className="container">
