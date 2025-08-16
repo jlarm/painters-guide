@@ -4,6 +4,7 @@ import { Save } from 'lucide-react'
 export function ColorWheel({ colorInfo, onSave }) {
   const canvasRef = useRef(null)
   const [maxChroma, setMaxChroma] = useState(100)
+  const [showHarmony, setShowHarmony] = useState('none')
   
   useEffect(() => {
     const canvas = canvasRef.current
@@ -59,8 +60,82 @@ export function ColorWheel({ colorInfo, onSave }) {
       ctx.fill()
     })
     
-    // Draw current color position if available
-    if (colorInfo) {
+    // Draw harmony indicators if selected
+    if (colorInfo && showHarmony !== 'none') {
+      const { hsl } = colorInfo
+      const baseHue = hsl.h
+      
+      let harmonyHues = []
+      
+      switch (showHarmony) {
+        case 'complementary':
+          harmonyHues = [baseHue, baseHue + 180]
+          break
+        case 'analogous':
+          harmonyHues = [baseHue - 30, baseHue, baseHue + 30]
+          break
+        case 'triadic':
+          harmonyHues = [baseHue, baseHue + 120, baseHue + 240]
+          break
+        case 'tetradic':
+          harmonyHues = [baseHue, baseHue + 90, baseHue + 180, baseHue + 270]
+          break
+        case 'monochromatic':
+          // For monochromatic, we'll show the same hue at different saturations
+          harmonyHues = [baseHue]
+          break
+      }
+      
+      // Draw harmony lines and points
+      harmonyHues.forEach((hue, index) => {
+        const normalizedHue = ((hue % 360) + 360) % 360
+        const angle = normalizedHue * Math.PI / 180
+        
+        if (showHarmony === 'monochromatic') {
+          // For monochromatic, draw at different saturation levels
+          const saturations = [30, hsl.s, 80]
+          saturations.forEach((sat, satIndex) => {
+            const distance = (sat / 100) * radius
+            const x = centerX + Math.cos(angle) * distance
+            const y = centerY + Math.sin(angle) * distance
+            
+            // Draw harmony point
+            ctx.beginPath()
+            ctx.arc(x, y, 6, 0, 2 * Math.PI)
+            ctx.fillStyle = satIndex === 1 ? '#ffffff' : '#fbbf24'
+            ctx.fill()
+            ctx.strokeStyle = satIndex === 1 ? '#1e293b' : '#f59e0b'
+            ctx.lineWidth = 2
+            ctx.stroke()
+          })
+        } else {
+          // For other harmonies, use the same saturation as the base color
+          const distance = (hsl.s / 100) * radius
+          const x = centerX + Math.cos(angle) * distance
+          const y = centerY + Math.sin(angle) * distance
+          
+          // Draw line from center to harmony point
+          if (index > 0) {
+            ctx.beginPath()
+            ctx.moveTo(centerX, centerY)
+            ctx.lineTo(x, y)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
+            ctx.lineWidth = 1
+            ctx.stroke()
+          }
+          
+          // Draw harmony point
+          ctx.beginPath()
+          ctx.arc(x, y, 6, 0, 2 * Math.PI)
+          ctx.fillStyle = index === 0 ? '#ffffff' : '#fbbf24'
+          ctx.fill()
+          ctx.strokeStyle = index === 0 ? '#1e293b' : '#f59e0b'
+          ctx.lineWidth = 2
+          ctx.stroke()
+        }
+      })
+    } else if (colorInfo) {
+      // Draw only the current color position
       const { hsl } = colorInfo
       const angle = hsl.h * Math.PI / 180
       const distance = (hsl.s / 100) * radius
@@ -81,7 +156,7 @@ export function ColorWheel({ colorInfo, onSave }) {
       ctx.lineWidth = 2
       ctx.stroke()
     }
-  }, [colorInfo, maxChroma])
+  }, [colorInfo, maxChroma, showHarmony])
   
   if (!colorInfo) {
     return (
@@ -108,31 +183,73 @@ export function ColorWheel({ colorInfo, onSave }) {
       boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
     }}>
       {/* Header */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '20px' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b' }}>
-            Color Wheel Analysis
-          </span>
-          <select 
-            value={maxChroma} 
-            onChange={(e) => setMaxChroma(Number(e.target.value))}
-            style={{
-              padding: '4px 8px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '12px',
-              background: 'white'
-            }}
-          >
-            <option value={50}>Max Chroma: 50</option>
-            <option value={75}>Max Chroma: 75</option>
-            <option value={100}>Max Chroma: 100</option>
-          </select>
+      <div style={{ marginBottom: '20px' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '12px' }}>
+          Color Wheel Analysis
+        </h3>
+        
+        {/* Controls */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          {/* Max Chroma Selector */}
+          <div>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '12px', 
+              fontWeight: '500', 
+              color: '#64748b',
+              marginBottom: '4px'
+            }}>
+              Max Chroma
+            </label>
+            <select 
+              value={maxChroma} 
+              onChange={(e) => setMaxChroma(Number(e.target.value))}
+              style={{
+                width: '100%',
+                padding: '6px 8px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '12px',
+                background: 'white'
+              }}
+            >
+              <option value={50}>50</option>
+              <option value={75}>75</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
+          
+          {/* Harmony Selector */}
+          <div>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '12px', 
+              fontWeight: '500', 
+              color: '#64748b',
+              marginBottom: '4px'
+            }}>
+              Show Harmony
+            </label>
+            <select 
+              value={showHarmony} 
+              onChange={(e) => setShowHarmony(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px 8px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '12px',
+                background: 'white'
+              }}
+            >
+              <option value="none">None</option>
+              <option value="complementary">Complementary</option>
+              <option value="analogous">Analogous</option>
+              <option value="triadic">Triadic</option>
+              <option value="tetradic">Tetradic</option>
+              <option value="monochromatic">Monochromatic</option>
+            </select>
+          </div>
         </div>
       </div>
       
@@ -262,6 +379,33 @@ export function ColorWheel({ colorInfo, onSave }) {
         </div>
       </div>
       
+      {/* Harmony Information */}
+      {showHarmony !== 'none' && colorInfo && (
+        <div style={{ 
+          background: '#fef3c7',
+          borderRadius: '8px',
+          padding: '12px',
+          marginBottom: '16px',
+          border: '1px solid #f59e0b'
+        }}>
+          <div style={{ 
+            fontSize: '12px', 
+            color: '#92400e',
+            fontWeight: '500',
+            marginBottom: '4px'
+          }}>
+            🎨 {showHarmony.charAt(0).toUpperCase() + showHarmony.slice(1)} Harmony
+          </div>
+          <div style={{ fontSize: '11px', color: '#78350f' }}>
+            {showHarmony === 'complementary' && 'White dot: selected color • Orange dots: opposite color for high contrast'}
+            {showHarmony === 'analogous' && 'White dot: selected color • Orange dots: adjacent colors for gentle harmony'}
+            {showHarmony === 'triadic' && 'White dot: selected color • Orange dots: evenly spaced colors for vibrant balance'}
+            {showHarmony === 'tetradic' && 'White dot: selected color • Orange dots: four colors forming a rectangle for rich contrast'}
+            {showHarmony === 'monochromatic' && 'White dot: selected color • Orange dots: same hue at different saturations'}
+          </div>
+        </div>
+      )}
+
       {/* Color Info Display */}
       <div style={{ 
         background: '#f8fafc',
