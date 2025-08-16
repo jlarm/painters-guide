@@ -176,4 +176,16 @@
   .hero-section {
     padding: 2rem 1rem;
   }
+  
+  .analysis-layout {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .tab-label {
+    display: none;
+  }
+}
+
+.tab-label {
+  display: inline;
 }

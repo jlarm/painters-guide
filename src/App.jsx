@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { ImageUpload } from '@/components/ImageUpload'
 import { ImageCanvas } from '@/components/ImageCanvas'
-import { ColorAnalysis } from '@/components/ColorAnalysis'
-import { ColorWheel } from '@/components/ColorWheel'
-import { SavedColors } from '@/components/SavedColors'
+import { AnalysisTabs } from '@/components/AnalysisTabs'
 import { Palette, Brush, Pipette, Image } from 'lucide-react'
 
 function App() {
@@ -11,6 +9,8 @@ function App() {
   const [imageElement, setImageElement] = useState(null)
   const [selectedColor, setSelectedColor] = useState(null)
   const [savedColors, setSavedColors] = useState([])
+  const [savedHarmonies, setSavedHarmonies] = useState([])
+  const [valueAnalysis, setValueAnalysis] = useState(null)
 
   const handleImageLoad = (img, dataUrl) => {
     setImageElement(img)
@@ -36,6 +36,20 @@ function App() {
 
   const handleSelectSavedColor = (colorInfo) => {
     setSelectedColor(colorInfo)
+  }
+
+  const handleSaveHarmony = (harmonyColors, harmonyType) => {
+    const harmony = {
+      type: harmonyType,
+      colors: harmonyColors,
+      id: Date.now(),
+      baseColor: selectedColor?.hex
+    }
+    setSavedHarmonies(prev => [...prev, harmony])
+  }
+
+  const handleValueAnalysis = (analysis) => {
+    setValueAnalysis(analysis)
   }
 
   return (
@@ -175,30 +189,31 @@ function App() {
                 />
               </div>
 
-              {/* Analysis Components Grid */}
+              {/* Analysis Components - Tabbed Interface */}
               <div style={{ 
                 display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', 
-                gap: 'clamp(16px, 4vw, 24px)',
+                gridTemplateColumns: '2fr 1fr', 
+                gap: '24px',
                 alignItems: 'start'
-              }}>
-                {/* Color Analysis */}
-                <ColorAnalysis colorInfo={selectedColor} />
-                
-                {/* Color Wheel Analysis */}
-                <ColorWheel 
-                  colorInfo={selectedColor} 
-                  onSave={handleSaveColor}
+              }}
+              className="analysis-layout"
+              >
+                {/* Main Analysis Tabs */}
+                <AnalysisTabs 
+                  selectedColor={selectedColor}
+                  imageElement={imageElement}
+                  savedColors={savedColors}
+                  savedHarmonies={savedHarmonies}
+                  valueAnalysis={valueAnalysis}
+                  onSaveColor={handleSaveColor}
+                  onSaveHarmony={handleSaveHarmony}
+                  onRemoveColor={handleRemoveColor}
+                  onSelectSavedColor={handleSelectSavedColor}
+                  onValueAnalysis={handleValueAnalysis}
                 />
                 
-                {/* Saved Colors */}
+                {/* Sidebar */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <SavedColors 
-                    savedColors={savedColors}
-                    onRemoveColor={handleRemoveColor}
-                    onSelectColor={handleSelectSavedColor}
-                  />
-                  
                   {/* Quick Actions */}
                   <div style={{ 
                     background: 'white', 
@@ -213,7 +228,7 @@ function App() {
                     <ImageUpload onImageLoad={handleImageLoad} image={uploadedImage} compact={true} />
                   </div>
 
-                  {/* Tips */}
+                  {/* Pro Tips */}
                   <div style={{ 
                     background: 'linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%)', 
                     borderRadius: '12px', 
@@ -224,10 +239,10 @@ function App() {
                       💡 Pro Tips
                     </h3>
                     <div style={{ fontSize: '14px', color: '#374151' }}>
-                      <p style={{ margin: '0 0 8px 0' }}>• Use the color wheel to see temperature relationships</p>
-                      <p style={{ margin: '0 0 8px 0' }}>• Save colors to build a complete palette</p>
-                      <p style={{ margin: '0 0 8px 0' }}>• Adjust max chroma to focus on muted colors</p>
-                      <p style={{ margin: 0 }}>• Click saved colors to reselect them</p>
+                      <p style={{ margin: '0 0 8px 0' }}>• Use value studies to understand light patterns</p>
+                      <p style={{ margin: '0 0 8px 0' }}>• Generate harmonies for balanced color schemes</p>
+                      <p style={{ margin: '0 0 8px 0' }}>• Squint view reveals major value shapes</p>
+                      <p style={{ margin: 0 }}>• High contrast draws attention to focal points</p>
                     </div>
                   </div>
                 </div>
