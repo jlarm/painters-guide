@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import { Save } from 'lucide-react'
 
 export function ColorWheel({ colorInfo, onSave }) {
@@ -302,14 +301,20 @@ export function ColorWheel({ colorInfo, onSave }) {
       
       {/* Save Button */}
       {onSave && (
-        <Button 
+        <button 
           onClick={() => onSave(colorInfo)}
-          className="w-full"
-          variant="outline"
+          className="btn-primary"
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
         >
-          <Save className="w-4 h-4 mr-2" />
+          <Save style={{ width: '16px', height: '16px' }} />
           Save
-        </Button>
+        </button>
       )}
     </div>
   )

@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Palette, Copy, RotateCw } from 'lucide-react'
+import { Palette, Copy } from 'lucide-react'
 
 export function ColorHarmony({ colorInfo, onSaveHarmony }) {
   const [harmonyType, setHarmonyType] = useState('complementary')
@@ -245,28 +244,40 @@ export function ColorHarmony({ colorInfo, onSaveHarmony }) {
           
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: '8px' }}>
-            <Button 
-              variant="outline" 
-              size="sm"
+            <button 
               onClick={() => {
                 const allColors = generateHarmony.map(c => c.hex).join(', ')
                 copyToClipboard(allColors, 'all')
               }}
-              className="flex-1"
+              className="btn-secondary"
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                fontSize: '14px'
+              }}
             >
-              <Copy className="w-4 h-4 mr-2" />
+              <Copy style={{ width: '14px', height: '14px' }} />
               Copy All
-            </Button>
+            </button>
             {onSaveHarmony && (
-              <Button 
-                variant="outline" 
-                size="sm"
+              <button 
                 onClick={() => onSaveHarmony(generateHarmony, harmonyType)}
-                className="flex-1"
+                className="btn-primary"
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  fontSize: '14px'
+                }}
               >
-                <Palette className="w-4 h-4 mr-2" />
+                <Palette style={{ width: '14px', height: '14px' }} />
                 Save Harmony
-              </Button>
+              </button>
             )}
           </div>
         </div>

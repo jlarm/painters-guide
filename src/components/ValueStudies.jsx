@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
 import { Eye, Layers, Download, RotateCcw } from 'lucide-react'
 
 export function ValueStudies({ image, onValueAnalysis }) {
@@ -326,37 +325,55 @@ export function ValueStudies({ image, onValueAnalysis }) {
       
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-        <Button 
-          variant="outline" 
-          size="sm"
+        <button 
           onClick={downloadCanvas}
-          className="flex-1"
+          className="btn-secondary"
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            fontSize: '14px'
+          }}
         >
-          <Download className="w-4 h-4 mr-2" />
+          <Download style={{ width: '14px', height: '14px' }} />
           Download
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
+        </button>
+        <button 
           onClick={analyzeValues}
-          className="flex-1"
+          className="btn-primary"
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            fontSize: '14px'
+          }}
         >
-          <Layers className="w-4 h-4 mr-2" />
+          <Layers style={{ width: '14px', height: '14px' }} />
           Analyze
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
+        </button>
+        <button 
           onClick={() => {
             setStudyMode('original')
             setValueGroups(5)
             setSquintLevel(0)
           }}
-          className="flex-1"
+          className="btn-secondary"
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            fontSize: '14px'
+          }}
         >
-          <RotateCcw className="w-4 h-4 mr-2" />
+          <RotateCcw style={{ width: '14px', height: '14px' }} />
           Reset
-        </Button>
+        </button>
       </div>
       
       {/* Study Info */}

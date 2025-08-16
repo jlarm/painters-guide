@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Trash2, Copy } from 'lucide-react'
 
 export function SavedColors({ savedColors, onRemoveColor, onSelectColor }) {
@@ -133,20 +132,25 @@ export function SavedColors({ savedColors, onRemoveColor, onSelectColor }) {
           paddingTop: '16px', 
           borderTop: '1px solid #e2e8f0' 
         }}>
-          <Button 
-            variant="outline" 
-            size="sm"
+          <button 
             onClick={() => {
               const rgbValues = savedColors.map(color => 
                 `${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}`
               ).join('\n')
               copyToClipboard(rgbValues, 'all')
             }}
-            className="w-full"
+            className="btn-secondary"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
           >
-            <Copy className="w-4 h-4 mr-2" />
+            <Copy style={{ width: '16px', height: '16px' }} />
             Copy All RGB Values
-          </Button>
+          </button>
         </div>
       )}
     </div>
