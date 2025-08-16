@@ -117,7 +117,7 @@ function App() {
                   margin: '0 auto 48px auto',
                   lineHeight: '1.6'
                 }}>
-                  Upload any image to apply professional oil painting effects and get precise color analysis 
+                  Transform your reference photos with professional oil painting effects and get precise color analysis 
                   with chroma, value, temperature, and tint measurements for accurate color mixing.
                 </p>
                 

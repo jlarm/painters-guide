@@ -1,0 +1,32 @@
+{
+  "name": "Painter's Perspective - Professional Color Analysis Tool",
+  "short_name": "Painter's Perspective",
+  "description": "Transform your reference photos with professional oil painting effects and get precise color analysis with chroma, value, temperature, and tint measurements for accurate color mixing.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#3b82f6",
+  "categories": ["art", "design", "photo", "productivity"],
+  "icons": [
+    {
+      "src": "/palette.svg",
+      "sizes": "48x48",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    }
+  ]
+}

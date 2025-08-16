@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://painters-perspective.vercel.app/sitemap.xml
