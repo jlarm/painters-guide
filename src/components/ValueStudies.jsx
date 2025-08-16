@@ -7,6 +7,8 @@ export function ValueStudies({ image, onValueAnalysis }) {
   const [studyMode, setStudyMode] = useState('original')
   const [valueGroups, setValueGroups] = useState(5)
   const [squintLevel, setSquintLevel] = useState(0)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [localAnalysis, setLocalAnalysis] = useState(null)
   
   // Define helper functions first
   const applyGrayscale = useCallback((data) => {
@@ -115,6 +117,11 @@ export function ValueStudies({ image, onValueAnalysis }) {
     applyStudyMode(originalCanvas, canvas, studyMode, valueGroups, squintLevel)
   }, [image, studyMode, valueGroups, squintLevel, applyStudyMode])
   
+  // Clear analysis when study mode changes
+  useEffect(() => {
+    setLocalAnalysis(null)
+  }, [studyMode, valueGroups, squintLevel])
+  
   const downloadCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -125,39 +132,57 @@ export function ValueStudies({ image, onValueAnalysis }) {
     link.click()
   }
   
-  const analyzeValues = () => {
+  const analyzeValues = async () => {
     const canvas = canvasRef.current
-    if (!canvas || !onValueAnalysis) return
+    if (!canvas) return
     
-    const ctx = canvas.getContext('2d')
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    const data = imageData.data
+    setIsAnalyzing(true)
     
-    const values = []
-    for (let i = 0; i < data.length; i += 4) {
-      const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2])
-      values.push(gray)
+    // Add a small delay to show the loading state
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    try {
+      const ctx = canvas.getContext('2d')
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      const data = imageData.data
+      
+      const values = []
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2])
+        values.push(gray)
+      }
+      
+      // Calculate value statistics
+      const sortedValues = [...values].sort((a, b) => a - b)
+      const darkest = sortedValues[0]
+      const lightest = sortedValues[sortedValues.length - 1]
+      const median = sortedValues[Math.floor(sortedValues.length / 2)]
+      const average = Math.round(values.reduce((sum, val) => sum + val, 0) / values.length)
+      
+      // Calculate value distribution
+      const valueRange = lightest - darkest
+      const contrast = valueRange / 255 * 100
+      
+      const analysisResult = {
+        darkest,
+        lightest,
+        median,
+        average,
+        contrast: Math.round(contrast),
+        range: valueRange
+      }
+      
+      setLocalAnalysis(analysisResult)
+      
+      // Also call the parent callback if provided
+      if (onValueAnalysis) {
+        onValueAnalysis(analysisResult)
+      }
+    } catch (error) {
+      console.error('Error analyzing values:', error)
+    } finally {
+      setIsAnalyzing(false)
     }
-    
-    // Calculate value statistics
-    const sortedValues = [...values].sort((a, b) => a - b)
-    const darkest = sortedValues[0]
-    const lightest = sortedValues[sortedValues.length - 1]
-    const median = sortedValues[Math.floor(sortedValues.length / 2)]
-    const average = Math.round(values.reduce((sum, val) => sum + val, 0) / values.length)
-    
-    // Calculate value distribution
-    const valueRange = lightest - darkest
-    const contrast = valueRange / 255 * 100
-    
-    onValueAnalysis({
-      darkest,
-      lightest,
-      median,
-      average,
-      contrast: Math.round(contrast),
-      range: valueRange
-    })
   }
   
   const studyModes = [
@@ -342,24 +367,44 @@ export function ValueStudies({ image, onValueAnalysis }) {
         </button>
         <button 
           onClick={analyzeValues}
-          className="btn-primary"
+          disabled={isAnalyzing}
+          className={isAnalyzing ? "btn-secondary" : "btn-primary"}
           style={{
             flex: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '6px',
-            fontSize: '14px'
+            fontSize: '14px',
+            opacity: isAnalyzing ? 0.7 : 1,
+            cursor: isAnalyzing ? 'not-allowed' : 'pointer'
           }}
         >
-          <Layers style={{ width: '14px', height: '14px' }} />
-          Analyze
+          {isAnalyzing ? (
+            <>
+              <div style={{
+                width: '14px',
+                height: '14px',
+                border: '2px solid #94a3b8',
+                borderTop: '2px solid #3b82f6',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}></div>
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <Layers style={{ width: '14px', height: '14px' }} />
+              Analyze
+            </>
+          )}
         </button>
         <button 
           onClick={() => {
             setStudyMode('original')
             setValueGroups(5)
             setSquintLevel(0)
+            setLocalAnalysis(null)
           }}
           className="btn-secondary"
           style={{
@@ -375,6 +420,131 @@ export function ValueStudies({ image, onValueAnalysis }) {
           Reset
         </button>
       </div>
+      
+      {/* Analysis Results */}
+      {localAnalysis && (
+        <div style={{ 
+          background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '16px',
+          border: '1px solid #22c55e',
+          animation: 'fadeIn 0.5s ease-in'
+        }}>
+          <h4 style={{ 
+            fontWeight: '600', 
+            color: '#1e293b', 
+            marginBottom: '12px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}>
+            <div style={{ 
+              width: '8px', 
+              height: '8px', 
+              background: '#22c55e', 
+              borderRadius: '50%' 
+            }}></div>
+            Value Analysis Results
+          </h4>
+          
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', 
+            gap: '12px',
+            fontSize: '14px'
+          }}>
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '8px',
+              padding: '8px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+                {localAnalysis.contrast}%
+              </div>
+              <div style={{ color: '#64748b', fontSize: '12px' }}>Contrast</div>
+            </div>
+            
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '8px',
+              padding: '8px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+                {localAnalysis.range}
+              </div>
+              <div style={{ color: '#64748b', fontSize: '12px' }}>Value Range</div>
+            </div>
+            
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '8px',
+              padding: '8px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+                {localAnalysis.darkest}
+              </div>
+              <div style={{ color: '#64748b', fontSize: '12px' }}>Darkest</div>
+            </div>
+            
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '8px',
+              padding: '8px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+                {localAnalysis.lightest}
+              </div>
+              <div style={{ color: '#64748b', fontSize: '12px' }}>Lightest</div>
+            </div>
+            
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '8px',
+              padding: '8px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+                {localAnalysis.average}
+              </div>
+              <div style={{ color: '#64748b', fontSize: '12px' }}>Average</div>
+            </div>
+            
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '8px',
+              padding: '8px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+                {localAnalysis.median}
+              </div>
+              <div style={{ color: '#64748b', fontSize: '12px' }}>Median</div>
+            </div>
+          </div>
+          
+          {/* Analysis Interpretation */}
+          <div style={{ 
+            marginTop: '12px', 
+            padding: '8px 12px',
+            background: 'rgba(255, 255, 255, 0.5)',
+            borderRadius: '6px',
+            fontSize: '12px',
+            color: '#374151'
+          }}>
+            <strong>Interpretation:</strong> 
+            {localAnalysis.contrast > 70 ? ' High contrast image - great for dramatic paintings' :
+             localAnalysis.contrast > 40 ? ' Medium contrast - good tonal range' :
+             ' Low contrast - subtle, atmospheric mood'}
+            {localAnalysis.average < 85 && ' • Darker overall tone'}
+            {localAnalysis.average > 170 && ' • Lighter overall tone'}
+          </div>
+        </div>
+      )}
       
       {/* Study Info */}
       <div style={{ 
