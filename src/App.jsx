@@ -3,6 +3,7 @@ import { ImageUpload } from '@/components/ImageUpload'
 import { ImageCanvas } from '@/components/ImageCanvas'
 import { ColorAnalysis } from '@/components/ColorAnalysis'
 import { Palette, Brush, Pipette, Image } from 'lucide-react'
+import { Analytics } from '@vercel/analytics/next';
 
 function App() {
   const [uploadedImage, setUploadedImage] = useState(null)
@@ -188,6 +189,7 @@ function App() {
             </div>
           )}
         </div>
+        <Analytics />
       </main>
     </div>
   )
