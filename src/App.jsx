@@ -2,12 +2,15 @@ import { useState } from 'react'
 import { ImageUpload } from '@/components/ImageUpload'
 import { ImageCanvas } from '@/components/ImageCanvas'
 import { ColorAnalysis } from '@/components/ColorAnalysis'
+import { ColorWheel } from '@/components/ColorWheel'
+import { SavedColors } from '@/components/SavedColors'
 import { Palette, Brush, Pipette, Image } from 'lucide-react'
 
 function App() {
   const [uploadedImage, setUploadedImage] = useState(null)
   const [imageElement, setImageElement] = useState(null)
   const [selectedColor, setSelectedColor] = useState(null)
+  const [savedColors, setSavedColors] = useState([])
 
   const handleImageLoad = (img, dataUrl) => {
     setImageElement(img)
@@ -16,6 +19,22 @@ function App() {
   }
 
   const handleColorPick = (colorInfo) => {
+    setSelectedColor(colorInfo)
+  }
+
+  const handleSaveColor = (colorInfo) => {
+    // Check if color already exists
+    const exists = savedColors.some(saved => saved.hex === colorInfo.hex)
+    if (!exists) {
+      setSavedColors(prev => [...prev, colorInfo])
+    }
+  }
+
+  const handleRemoveColor = (index) => {
+    setSavedColors(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleSelectSavedColor = (colorInfo) => {
     setSelectedColor(colorInfo)
   }
 
@@ -140,48 +159,69 @@ function App() {
               <ImageUpload onImageLoad={handleImageLoad} image={uploadedImage} />
             </div>
           ) : (
-            <div className="grid grid-cols-4" style={{ gap: '24px' }}>
-              {/* Main Image Editor */}
-              <div style={{ gridColumn: 'span 3' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              {/* Full Width Image Editor */}
+              <div style={{ width: '100%' }}>
                 <ImageCanvas 
                   image={imageElement} 
                   onColorPick={handleColorPick}
                 />
               </div>
 
-              {/* Sidebar */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {/* Analysis Components Grid */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', 
+                gap: 'clamp(16px, 4vw, 24px)',
+                alignItems: 'start'
+              }}>
+                {/* Color Analysis */}
                 <ColorAnalysis colorInfo={selectedColor} />
                 
-                {/* Quick Actions */}
-                <div style={{ 
-                  background: 'white', 
-                  borderRadius: '12px', 
-                  padding: '24px', 
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-                }}>
-                  <h3 style={{ fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>
-                    Quick Actions
-                  </h3>
-                  <ImageUpload onImageLoad={handleImageLoad} image={uploadedImage} compact={true} />
-                </div>
+                {/* Color Wheel Analysis */}
+                <ColorWheel 
+                  colorInfo={selectedColor} 
+                  onSave={handleSaveColor}
+                />
+                
+                {/* Saved Colors */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <SavedColors 
+                    savedColors={savedColors}
+                    onRemoveColor={handleRemoveColor}
+                    onSelectColor={handleSelectSavedColor}
+                  />
+                  
+                  {/* Quick Actions */}
+                  <div style={{ 
+                    background: 'white', 
+                    borderRadius: '12px', 
+                    padding: '24px', 
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+                  }}>
+                    <h3 style={{ fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>
+                      Quick Actions
+                    </h3>
+                    <ImageUpload onImageLoad={handleImageLoad} image={uploadedImage} compact={true} />
+                  </div>
 
-                {/* Tips */}
-                <div style={{ 
-                  background: 'linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%)', 
-                  borderRadius: '12px', 
-                  padding: '24px', 
-                  border: '1px solid #bfdbfe'
-                }}>
-                  <h3 style={{ fontWeight: '600', color: '#1e293b', marginBottom: '12px' }}>
-                    💡 Pro Tips
-                  </h3>
-                  <div style={{ fontSize: '14px', color: '#374151' }}>
-                    <p style={{ margin: '0 0 8px 0' }}>• Use oil filters to simplify complex reference photos</p>
-                    <p style={{ margin: '0 0 8px 0' }}>• Sample multiple colors to build a complete palette</p>
-                    <p style={{ margin: '0 0 8px 0' }}>• Check color temperature for mood and lighting</p>
-                    <p style={{ margin: 0 }}>• Low chroma colors are perfect for shadows</p>
+                  {/* Tips */}
+                  <div style={{ 
+                    background: 'linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%)', 
+                    borderRadius: '12px', 
+                    padding: '24px', 
+                    border: '1px solid #bfdbfe'
+                  }}>
+                    <h3 style={{ fontWeight: '600', color: '#1e293b', marginBottom: '12px' }}>
+                      💡 Pro Tips
+                    </h3>
+                    <div style={{ fontSize: '14px', color: '#374151' }}>
+                      <p style={{ margin: '0 0 8px 0' }}>• Use the color wheel to see temperature relationships</p>
+                      <p style={{ margin: '0 0 8px 0' }}>• Save colors to build a complete palette</p>
+                      <p style={{ margin: '0 0 8px 0' }}>• Adjust max chroma to focus on muted colors</p>
+                      <p style={{ margin: 0 }}>• Click saved colors to reselect them</p>
+                    </div>
                   </div>
                 </div>
               </div>
