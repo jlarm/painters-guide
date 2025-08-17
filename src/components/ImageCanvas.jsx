@@ -385,7 +385,17 @@ export function ImageCanvas({ image, onColorPick }) {
                   max="10"
                   value={valueGroups}
                   onChange={(e) => setValueGroups(Number(e.target.value))}
-                  style={{ width: '60px' }}
+                  style={{
+                    width: '80px',
+                    height: '6px',
+                    borderRadius: '3px',
+                    background: '#e2e8f0',
+                    outline: 'none',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    cursor: 'pointer'
+                  }}
+                  className="custom-slider"
                 />
               </div>
             )}
@@ -402,7 +412,17 @@ export function ImageCanvas({ image, onColorPick }) {
                   max="10"
                   value={squintLevel}
                   onChange={(e) => setSquintLevel(Number(e.target.value))}
-                  style={{ width: '60px' }}
+                  style={{
+                    width: '80px',
+                    height: '6px',
+                    borderRadius: '3px',
+                    background: '#e2e8f0',
+                    outline: 'none',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    cursor: 'pointer'
+                  }}
+                  className="custom-slider"
                 />
               </div>
             )}

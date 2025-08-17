@@ -298,7 +298,17 @@ export function ValueStudies({ image, onValueAnalysis }) {
             max="10"
             value={valueGroups}
             onChange={(e) => setValueGroups(Number(e.target.value))}
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              height: '6px',
+              borderRadius: '3px',
+              background: '#e2e8f0',
+              outline: 'none',
+              appearance: 'none',
+              WebkitAppearance: 'none',
+              cursor: 'pointer'
+            }}
+            className="custom-slider"
           />
         </div>
       )}
@@ -320,7 +330,17 @@ export function ValueStudies({ image, onValueAnalysis }) {
             max="10"
             value={squintLevel}
             onChange={(e) => setSquintLevel(Number(e.target.value))}
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              height: '6px',
+              borderRadius: '3px',
+              background: '#e2e8f0',
+              outline: 'none',
+              appearance: 'none',
+              WebkitAppearance: 'none',
+              cursor: 'pointer'
+            }}
+            className="custom-slider"
           />
         </div>
       )}
