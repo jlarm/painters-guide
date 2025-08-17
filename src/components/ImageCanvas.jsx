@@ -14,6 +14,7 @@ export function ImageCanvas({ image, onColorPick }) {
   const [studyMode, setStudyMode] = useState('original')
   const [valueGroups, setValueGroups] = useState(5)
   const [squintLevel, setSquintLevel] = useState(0)
+  const [eyedropPosition, setEyedropPosition] = useState(null)
 
   useEffect(() => {
     if (image) {
@@ -64,6 +65,7 @@ export function ImageCanvas({ image, onColorPick }) {
     setIsFiltered(false)
     setFilterType('none')
     setStudyMode('original')
+    setEyedropPosition(null)
   }
 
   const applyOilFilter = async () => {
@@ -125,6 +127,7 @@ export function ImageCanvas({ image, onColorPick }) {
     setIsFiltered(false)
     setFilterType('none')
     setStudyMode('original')
+    setEyedropPosition(null)
     setValueGroups(5)
     setSquintLevel(0)
   }
@@ -218,6 +221,12 @@ export function ImageCanvas({ image, onColorPick }) {
     const rect = canvas.getBoundingClientRect()
     const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width))
     const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height))
+    
+    // Store position for indicator (relative to the container, accounting for canvas position and padding)
+    const containerRect = canvas.parentElement.getBoundingClientRect()
+    const displayX = e.clientX - containerRect.left
+    const displayY = e.clientY - containerRect.top
+    setEyedropPosition({ x: displayX, y: displayY })
     
     const ctx = canvas.getContext('2d')
     const imageData = ctx.getImageData(x, y, 1, 1)
@@ -470,6 +479,33 @@ export function ImageCanvas({ image, onColorPick }) {
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
           }}>
             🎯 Click on the image to sample color
+          </div>
+        )}
+        {eyedropPosition && (
+          <div style={{
+            position: 'absolute',
+            left: `${eyedropPosition.x}px`,
+            top: `${eyedropPosition.y}px`,
+            width: '20px',
+            height: '20px',
+            border: '2px solid #3b82f6',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            animation: 'eyedropPulse 2s ease-in-out infinite',
+            zIndex: 10
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '4px',
+              height: '4px',
+              backgroundColor: '#3b82f6',
+              borderRadius: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}></div>
           </div>
         )}
         {isProcessing && (
