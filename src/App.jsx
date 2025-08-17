@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { ImageUpload } from '@/components/ImageUpload'
 import { ImageCanvas } from '@/components/ImageCanvas'
 import { AnalysisTabs } from '@/components/AnalysisTabs'
-import { Palette, Brush, Pipette, Image } from 'lucide-react'
+import { HelpGuide } from '@/components/HelpGuide'
+import { Palette, Brush, Pipette, Image, HelpCircle } from 'lucide-react'
 
 function App() {
   const [uploadedImage, setUploadedImage] = useState(null)
@@ -11,6 +12,7 @@ function App() {
   const [savedColors, setSavedColors] = useState([])
   const [savedHarmonies, setSavedHarmonies] = useState([])
   const [valueAnalysis, setValueAnalysis] = useState(null)
+  const [showHelp, setShowHelp] = useState(false)
 
   const handleImageLoad = (img, dataUrl) => {
     setImageElement(img)
@@ -57,22 +59,39 @@ function App() {
       {/* Header */}
       <header className="app-header">
         <div className="container">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ 
-              padding: '8px', 
-              background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', 
-              borderRadius: '8px' 
-            }}>
-              <Palette style={{ width: '24px', height: '24px', color: 'white' }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ 
+                padding: '8px', 
+                background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', 
+                borderRadius: '8px' 
+              }}>
+                <Palette style={{ width: '24px', height: '24px', color: 'white' }} />
+              </div>
+              <div>
+                <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#1e293b' }}>
+                  Painter's Perspective
+                </h1>
+                <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
+                  Professional Color Analysis Tool
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#1e293b' }}>
-                Painter's Perspective
-              </h1>
-              <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
-                Professional Color Analysis Tool
-              </p>
-            </div>
+            
+            <button
+              onClick={() => setShowHelp(true)}
+              className="btn-secondary"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                fontSize: '14px'
+              }}
+            >
+              <HelpCircle style={{ width: '18px', height: '18px' }} />
+              Help Guide
+            </button>
           </div>
         </div>
       </header>
@@ -251,6 +270,8 @@ function App() {
           )}
         </div>
       </main>
+      
+      <HelpGuide isOpen={showHelp} onClose={() => setShowHelp(false)} />
     </div>
   )
 }
