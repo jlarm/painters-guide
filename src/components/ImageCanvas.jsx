@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Palette, Pipette, RotateCcw, Sparkles, Circle } from 'lucide-react'
+import { Palette, Pipette, RotateCcw, Sparkles, Circle, Eye } from 'lucide-react'
 import { applyOilPaintingFilter, applySimplifiedFilter, analyzeColor } from '@/utils/imageFilters'
 
 export function ImageCanvas({ image, onColorPick }) {
@@ -11,12 +11,24 @@ export function ImageCanvas({ image, onColorPick }) {
   const [isEyedropperActive, setIsEyedropperActive] = useState(false)
   const [filterType, setFilterType] = useState('none')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [studyMode, setStudyMode] = useState('original')
+  const [valueGroups, setValueGroups] = useState(5)
+  const [squintLevel, setSquintLevel] = useState(0)
 
   useEffect(() => {
     if (image) {
       drawImageToCanvas(image)
     }
   }, [image])
+
+  // Apply study mode when it changes
+  useEffect(() => {
+    if (image && studyMode !== 'original') {
+      applyStudyModeToCanvas()
+    } else if (image && studyMode === 'original') {
+      resetToOriginal()
+    }
+  }, [studyMode, valueGroups, squintLevel, image])
 
   const drawImageToCanvas = (img) => {
     const canvas = canvasRef.current
@@ -51,6 +63,7 @@ export function ImageCanvas({ image, onColorPick }) {
     
     setIsFiltered(false)
     setFilterType('none')
+    setStudyMode('original')
   }
 
   const applyOilFilter = async () => {
@@ -111,7 +124,90 @@ export function ImageCanvas({ image, onColorPick }) {
     
     setIsFiltered(false)
     setFilterType('none')
+    setStudyMode('original')
+    setValueGroups(5)
+    setSquintLevel(0)
   }
+
+  const resetToOriginal = () => {
+    const canvas = canvasRef.current
+    const originalCanvas = originalCanvasRef.current
+    if (!canvas || !originalCanvas) return
+
+    const ctx = canvas.getContext('2d')
+    const originalCtx = originalCanvas.getContext('2d')
+    const originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height)
+    ctx.putImageData(originalImageData, 0, 0)
+  }
+
+  // Study mode helper functions
+  const applyGrayscale = useCallback((data) => {
+    for (let i = 0; i < data.length; i += 4) {
+      const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2])
+      data[i] = gray     // Red
+      data[i + 1] = gray // Green
+      data[i + 2] = gray // Blue
+      // Alpha stays the same
+    }
+  }, [])
+  
+  const applyValueGrouping = useCallback((data, groups) => {
+    const step = 255 / (groups - 1)
+    for (let i = 0; i < data.length; i += 4) {
+      const gray = data[i] // Already grayscale at this point
+      const groupedValue = Math.round(gray / step) * step
+      data[i] = groupedValue
+      data[i + 1] = groupedValue
+      data[i + 2] = groupedValue
+    }
+  }, [])
+  
+  const applyPosterize = useCallback((data, levels) => {
+    const step = 255 / (levels - 1)
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = Math.round(data[i] / step) * step
+      data[i + 1] = Math.round(data[i + 1] / step) * step
+      data[i + 2] = Math.round(data[i + 2] / step) * step
+    }
+  }, [])
+  
+  const applyStudyModeToCanvas = useCallback(() => {
+    const canvas = canvasRef.current
+    const originalCanvas = originalCanvasRef.current
+    if (!canvas || !originalCanvas) return
+
+    const ctx = canvas.getContext('2d')
+    const originalCtx = originalCanvas.getContext('2d')
+    
+    const imageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height)
+    const data = imageData.data
+    
+    // Apply blur first if squint mode
+    if (studyMode === 'squint' && squintLevel > 0) {
+      ctx.filter = `blur(${squintLevel}px)`
+      ctx.drawImage(originalCanvas, 0, 0)
+      ctx.filter = 'none'
+      return
+    }
+    
+    switch (studyMode) {
+      case 'grayscale':
+        applyGrayscale(data)
+        break
+      case 'grouped':
+        applyGrayscale(data)
+        applyValueGrouping(data, valueGroups)
+        break
+      case 'posterize':
+        applyPosterize(data, valueGroups)
+        break
+      default:
+        // Original - no changes needed
+        break
+    }
+    
+    ctx.putImageData(imageData, 0, 0)
+  }, [studyMode, valueGroups, squintLevel, applyGrayscale, applyValueGrouping, applyPosterize])
 
   const handleCanvasClick = (e) => {
     if (!isEyedropperActive) return
@@ -171,8 +267,10 @@ export function ImageCanvas({ image, onColorPick }) {
             Image Editor
           </span>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          <button
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+          {/* Filter Buttons */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            <button
             onClick={applySimpleFilter}
             className={`${filterType === 'simplified' ? 'btn-active' : 'btn-secondary'}`}
             disabled={isProcessing}
@@ -251,6 +349,64 @@ export function ImageCanvas({ image, onColorPick }) {
             <RotateCcw style={{ width: '16px', height: '16px' }} />
             Reset
           </button>
+          </div>
+          
+          {/* Study Mode Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Study Mode Dropdown */}
+            <select 
+              value={studyMode}
+              onChange={(e) => setStudyMode(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '14px',
+                background: 'white',
+                minWidth: '140px'
+              }}
+            >
+              <option value="original">Original</option>
+              <option value="grayscale">Grayscale</option>
+              <option value="grouped">Value Groups</option>
+              <option value="squint">Squint View</option>
+              <option value="posterize">Posterize</option>
+            </select>
+            
+            {/* Value Groups Control */}
+            {(studyMode === 'grouped' || studyMode === 'posterize') && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <label style={{ fontSize: '12px', color: '#374151', whiteSpace: 'nowrap' }}>
+                  {studyMode === 'grouped' ? 'Groups' : 'Levels'}: {valueGroups}
+                </label>
+                <input
+                  type="range"
+                  min="3"
+                  max="10"
+                  value={valueGroups}
+                  onChange={(e) => setValueGroups(Number(e.target.value))}
+                  style={{ width: '60px' }}
+                />
+              </div>
+            )}
+            
+            {/* Squint Level Control */}
+            {studyMode === 'squint' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <label style={{ fontSize: '12px', color: '#374151', whiteSpace: 'nowrap' }}>
+                  Blur: {squintLevel}px
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="10"
+                  value={squintLevel}
+                  onChange={(e) => setSquintLevel(Number(e.target.value))}
+                  style={{ width: '60px' }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -335,7 +491,7 @@ export function ImageCanvas({ image, onColorPick }) {
       </div>
       
       {/* Filter Status */}
-      {filterType !== 'none' && (
+      {(filterType !== 'none' || studyMode !== 'original') && (
         <div style={{
           marginTop: '16px',
           padding: '12px',
@@ -346,7 +502,13 @@ export function ImageCanvas({ image, onColorPick }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#1e40af' }}>
             <div style={{ width: '8px', height: '8px', background: '#3b82f6', borderRadius: '50%' }}></div>
             <span style={{ fontWeight: '500' }}>
-              {filterType === 'oil' ? 'Oil Paint' : 'Simplified'} filter applied
+              {filterType !== 'none' 
+                ? `${filterType === 'oil' ? 'Oil Paint' : 'Simplified'} filter applied`
+                : `${studyMode === 'grayscale' ? 'Grayscale' : 
+                      studyMode === 'grouped' ? 'Value Groups' :
+                      studyMode === 'squint' ? 'Squint View' :
+                      studyMode === 'posterize' ? 'Posterize' : 'Original'} study mode active`
+              }
             </span>
           </div>
         </div>
