@@ -8,6 +8,12 @@ export function HelpGuide({ isOpen, onClose }) {
     setExpandedSection(expandedSection === sectionId ? null : sectionId)
   }
 
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
+
   if (!isOpen) return null
 
   const sections = [
@@ -197,7 +203,7 @@ export function HelpGuide({ isOpen, onClose }) {
   ]
 
   return (
-    <div className="help-overlay">
+    <div className="help-overlay" onClick={handleOverlayClick}>
       <div className="help-modal">
         <div className="help-header">
           <h2>Painter's Perspective - User Guide</h2>
