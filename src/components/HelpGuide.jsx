@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, ChevronRight, ChevronDown, Upload, Palette, Eye, Grid3X3, Target, TrendingUp, Pipette, Sparkles, Circle, RotateCcw } from 'lucide-react'
+import { X, ChevronRight, ChevronDown, Upload, Palette, Eye, Grid3X3, Target, TrendingUp, Pipette, Sparkles, Circle, RotateCcw, Brush, Sun, Moon } from 'lucide-react'
 
 export function HelpGuide({ isOpen, onClose }) {
   const [expandedSection, setExpandedSection] = useState('getting-started')
@@ -133,6 +133,78 @@ export function HelpGuide({ isOpen, onClose }) {
       )
     },
     {
+      id: 'paint-guide',
+      title: 'Paint Guide',
+      icon: Brush,
+      content: (
+        <div className="help-section-content">
+          <h4>Professional Painting Recommendations</h4>
+          <p>The Paint Guide tab provides expert mixing advice and temperature guidance based on your reference image and selected colors.</p>
+          
+          <div className="feature-list">
+            <div className="feature-item">
+              <div className="feature-header">
+                <Sun size={16} className="feature-icon" />
+                <strong>Temperature Guidance</strong>
+              </div>
+              <p>Automatic analysis of your image's lighting characteristics:</p>
+              <div className="sub-feature">• <strong>Warm lighting:</strong> Sunlight, tungsten bulbs - creates cool shadows</div>
+              <div className="sub-feature">• <strong>Cool lighting:</strong> Overcast sky, fluorescent - creates warm or neutral shadows</div>
+              <div className="sub-feature">• <strong>Neutral lighting:</strong> Balanced natural light - flexible shadow temperatures</div>
+            </div>
+            
+            <div className="feature-item">
+              <div className="feature-header">
+                <Palette size={16} className="feature-icon" />
+                <strong>Smart Color Mixing</strong>
+              </div>
+              <p>Dynamic recommendations based on colors you sample:</p>
+              <div className="sub-feature">• <strong>Warm colors:</strong> Cadmium Red, Burnt Sienna, Yellow Ochre</div>
+              <div className="sub-feature">• <strong>Cool colors:</strong> Ultramarine Blue, Viridian Green, Payne's Gray</div>
+              <div className="sub-feature">• <strong>Neutral colors:</strong> Burnt Umber, Raw Umber, Ivory Black</div>
+            </div>
+            
+            <div className="feature-item">
+              <div className="feature-header">
+                <Moon size={16} className="feature-icon" />
+                <strong>Shadow & Highlight Mixing</strong>
+              </div>
+              <p>Professional techniques for realistic lighting:</p>
+              <div className="sub-feature">• <strong>Warm light shadows:</strong> Add Ultramarine Blue + Burnt Umber</div>
+              <div className="sub-feature">• <strong>Cool light shadows:</strong> Add Raw Umber + Burnt Sienna</div>
+              <div className="sub-feature">• <strong>Warm highlights:</strong> Add Cadmium Yellow to Titanium White</div>
+              <div className="sub-feature">• <strong>Cool highlights:</strong> Add Ultramarine Blue to Titanium White</div>
+            </div>
+            
+            <div className="feature-item">
+              <div className="feature-header">
+                <Eye size={16} className="feature-icon" />
+                <strong>Value-Based Recommendations</strong>
+              </div>
+              <p>Mixing tips based on your image's contrast and brightness:</p>
+              <div className="sub-feature">• <strong>High contrast:</strong> Reserve pure black/white for extreme values</div>
+              <div className="sub-feature">• <strong>Dark scenes:</strong> Build darks with transparent layers</div>
+              <div className="sub-feature">• <strong>Light scenes:</strong> Tint whites rather than using pure white</div>
+            </div>
+          </div>
+          
+          <h4>How to Use the Paint Guide</h4>
+          <ol>
+            <li>Upload your reference image</li>
+            <li>Click the "Paint Guide" tab in the analysis section</li>
+            <li>Review the automatic temperature analysis</li>
+            <li>Sample colors with the eyedropper for specific mixing advice</li>
+            <li>Follow the shadow, highlight, and mid-tone recommendations</li>
+            <li>Apply the general oil painting techniques provided</li>
+          </ol>
+          
+          <div className="help-tip">
+            <strong>💡 Pro Tips:</strong> The recommendations update dynamically as you sample different colors. Use this to build a complete understanding of your reference's color temperature relationships.
+          </div>
+        </div>
+      )
+    },
+    {
       id: 'analysis-tabs',
       title: 'Analysis Tabs',
       icon: Palette,
@@ -144,13 +216,19 @@ export function HelpGuide({ isOpen, onClose }) {
               <strong>Color Analysis:</strong> Detailed breakdown of sampled colors with mixing recommendations
             </div>
             <div className="feature-item">
+              <strong>Color Wheel:</strong> Interactive color wheel showing relationships and harmonies
+            </div>
+            <div className="feature-item">
               <strong>Color Harmony:</strong> Generate complementary, triadic, and other color schemes based on selected colors
             </div>
             <div className="feature-item">
-              <strong>Value Studies:</strong> Small-scale value analysis with downloadable studies
+              <strong>Value Studies:</strong> Small-scale value analysis with downloadable studies and different study modes
             </div>
             <div className="feature-item">
-              <strong>Saved Colors:</strong> Build a palette of colors you've sampled from the image
+              <strong>Paint Guide:</strong> Professional mixing recommendations, temperature guidance, and oil painting techniques
+            </div>
+            <div className="feature-item">
+              <strong>Saved:</strong> Build a palette of colors you've sampled and view analysis summaries
             </div>
           </div>
           
@@ -189,12 +267,16 @@ export function HelpGuide({ isOpen, onClose }) {
               <p>Apply Simplified or Oil Paint filters to reduce detail and focus on essential elements.</p>
             </li>
             <li>
+              <strong>Get Painting Guidance:</strong>
+              <p>Use the Paint Guide tab for professional mixing recommendations and temperature guidance.</p>
+            </li>
+            <li>
               <strong>Generate Color Schemes:</strong>
               <p>Use the Color Harmony tab to explore complementary and analogous color relationships.</p>
             </li>
             <li>
               <strong>Final Reference:</strong>
-              <p>Keep the app open while painting to reference your analysis and color samples.</p>
+              <p>Keep the app open while painting to reference your analysis, color samples, and mixing recommendations.</p>
             </li>
           </ol>
         </div>

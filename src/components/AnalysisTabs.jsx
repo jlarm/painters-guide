@@ -4,7 +4,8 @@ import { ColorWheel } from '@/components/ColorWheel'
 import { ColorHarmony } from '@/components/ColorHarmony'
 import { ValueStudies } from '@/components/ValueStudies'
 import { SavedColors } from '@/components/SavedColors'
-import { Pipette, Palette, Eye, Layers, BookOpen } from 'lucide-react'
+import { PaintRecommendations } from '@/components/PaintRecommendations'
+import { Pipette, Palette, Eye, Layers, BookOpen, Brush } from 'lucide-react'
 
 export function AnalysisTabs({ 
   selectedColor, 
@@ -57,6 +58,18 @@ export function AnalysisTabs({
         <ValueStudies 
           image={imageElement}
           onValueAnalysis={onValueAnalysis}
+        />
+      )
+    },
+    {
+      id: 'paint-recommendations',
+      label: 'Paint Guide',
+      icon: Brush,
+      component: (
+        <PaintRecommendations 
+          imageElement={imageElement}
+          selectedColor={selectedColor}
+          valueAnalysis={valueAnalysis}
         />
       )
     },
