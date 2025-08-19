@@ -64,17 +64,23 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       <div>
         <button 
           onClick={openFileDialog}
-          className="btn-secondary"
           style={{ 
             width: '100%',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '6px',
+            padding: '8px 12px',
+            fontSize: '12px',
+            backgroundColor: '#f3f4f6',
+            color: '#374151',
+            border: '1px solid #d1d5db',
+            borderRadius: '3px',
+            cursor: 'pointer'
           }}
         >
-          <Replace style={{ width: '16px', height: '16px' }} />
-          Upload New Image
+          <Replace style={{ width: '12px', height: '12px' }} />
+          Choose Image
         </button>
         <input
           ref={fileInputRef}
@@ -90,10 +96,9 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
   return (
     <div style={{ 
       background: 'white', 
-      border: '1px solid #e2e8f0', 
-      borderRadius: '12px', 
-      padding: '32px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+      border: '1px solid #d1d5db', 
+      borderRadius: '4px', 
+      padding: '24px'
     }}>
       {image ? (
         <div style={{ position: 'relative' }}>
@@ -103,80 +108,95 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
             style={{ 
               width: '100%', 
               height: 'auto', 
-              maxHeight: '384px', 
+              maxHeight: '300px', 
               objectFit: 'contain', 
-              borderRadius: '12px' 
+              borderRadius: '3px',
+              border: '1px solid #e5e7eb'
             }}
           />
           <button
             onClick={clearImage}
             style={{
               position: 'absolute',
-              top: '12px',
-              right: '12px',
-              background: '#ef4444',
+              top: '8px',
+              right: '8px',
+              background: '#dc2626',
               color: 'white',
               border: 'none',
-              borderRadius: '8px',
-              width: '36px',
-              height: '36px',
+              borderRadius: '3px',
+              width: '24px',
+              height: '24px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              fontSize: '11px'
             }}
           >
-            <X style={{ width: '16px', height: '16px' }} />
+            <X style={{ width: '12px', height: '12px' }} />
           </button>
         </div>
       ) : (
         <div
-          className={`upload-area ${dragActive ? 'drag-active' : ''}`}
+          style={{
+            textAlign: 'center',
+            padding: '32px 16px',
+            border: dragActive ? '2px dashed #6b7280' : '2px dashed #d1d5db',
+            borderRadius: '4px',
+            backgroundColor: dragActive ? '#f9fafb' : '#ffffff',
+            transition: 'all 0.2s ease',
+            cursor: 'pointer'
+          }}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
+          onClick={openFileDialog}
         >
           <div style={{ 
             display: 'inline-flex',
-            padding: '16px', 
-            background: 'linear-gradient(135deg, #dbeafe 0%, #f3e8ff 100%)', 
-            borderRadius: '16px',
-            marginBottom: '24px'
+            padding: '8px', 
+            backgroundColor: '#f3f4f6',
+            borderRadius: '3px',
+            marginBottom: '16px'
           }}>
-            <ImageIcon style={{ width: '48px', height: '48px', color: '#3b82f6' }} />
+            <ImageIcon style={{ width: '24px', height: '24px', color: '#6b7280' }} />
           </div>
           <h3 style={{ 
-            fontSize: '24px', 
-            fontWeight: '700', 
-            color: '#1e293b', 
-            marginBottom: '12px' 
+            fontSize: '16px', 
+            fontWeight: '500', 
+            color: '#111827', 
+            marginBottom: '8px' 
           }}>
-            Upload Your Reference Image
+            Upload Reference Image
           </h3>
           <p style={{ 
-            color: '#64748b', 
-            marginBottom: '32px', 
-            maxWidth: '400px', 
-            margin: '0 auto 32px auto',
-            lineHeight: '1.5'
+            color: '#6b7280', 
+            marginBottom: '20px',
+            fontSize: '13px',
+            maxWidth: '350px',
+            margin: '0 auto 20px auto',
+            lineHeight: '1.4'
           }}>
-            Drag and drop an image here, or click the button below to select from your files. 
-            Supports JPG, PNG, and other common formats.
+            Drop an image file here or click to browse. Supports JPG, PNG formats.
           </p>
           <button 
             onClick={openFileDialog}
-            className="btn-primary"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '16px'
+              gap: '6px',
+              fontSize: '12px',
+              padding: '8px 16px',
+              backgroundColor: '#374151',
+              color: 'white',
+              border: 'none',
+              borderRadius: '3px',
+              cursor: 'pointer'
             }}
           >
-            <Upload style={{ width: '20px', height: '20px' }} />
-            Choose Image
+            <Upload style={{ width: '14px', height: '14px' }} />
+            Choose File
           </button>
           <input
             ref={fileInputRef}
@@ -186,11 +206,11 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
             style={{ display: 'none' }}
           />
           <div style={{ 
-            marginTop: '24px', 
-            fontSize: '14px', 
-            color: '#94a3b8' 
+            marginTop: '16px', 
+            fontSize: '11px', 
+            color: '#9ca3af' 
           }}>
-            Maximum file size: 10MB • Recommended: High resolution for best results
+            Max 10MB • Best results with high resolution images
           </div>
         </div>
       )}

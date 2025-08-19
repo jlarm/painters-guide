@@ -173,10 +173,10 @@ export function FullscreenModal({
       <div
         style={{
           position: 'fixed',
-          top: '20px',
-          right: '20px',
+          top: '16px',
+          right: '16px',
           display: 'flex',
-          gap: '8px',
+          gap: '4px',
           zIndex: 10000
         }}
         onClick={(e) => e.stopPropagation()}
@@ -184,44 +184,46 @@ export function FullscreenModal({
         <button
           onClick={() => setIsMinimized(!isMinimized)}
           style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '8px',
-            padding: '12px',
-            color: 'white',
+            background: '#3a3a3a',
+            border: '1px solid #525252',
+            borderRadius: '4px',
+            padding: '8px',
+            color: '#d4d4d4',
             cursor: 'pointer',
-            backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 0.2s ease'
+            fontSize: '12px',
+            minWidth: '28px',
+            height: '28px'
           }}
           title={isMinimized ? 'Maximize' : 'Minimize'}
         >
           {isMinimized ? (
-            <Maximize2 style={{ width: '18px', height: '18px' }} />
+            <Maximize2 style={{ width: '14px', height: '14px' }} />
           ) : (
-            <Minimize2 style={{ width: '18px', height: '18px' }} />
+            <Minimize2 style={{ width: '14px', height: '14px' }} />
           )}
         </button>
         <button
           onClick={onClose}
           style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '8px',
-            padding: '12px',
-            color: 'white',
+            background: '#3a3a3a',
+            border: '1px solid #525252',
+            borderRadius: '4px',
+            padding: '8px',
+            color: '#d4d4d4',
             cursor: 'pointer',
-            backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 0.2s ease'
+            fontSize: '12px',
+            minWidth: '28px',
+            height: '28px'
           }}
           title="Close (Esc)"
         >
-          <X style={{ width: '18px', height: '18px' }} />
+          <X style={{ width: '14px', height: '14px' }} />
         </button>
       </div>
 
@@ -230,26 +232,26 @@ export function FullscreenModal({
         <div
           style={{
             position: 'fixed',
-            top: '20px',
-            left: '20px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            color: 'white',
-            backdropFilter: 'blur(8px)',
-            fontSize: '14px',
-            fontWeight: '500',
-            zIndex: 10000
+            top: '16px',
+            left: '16px',
+            background: '#3a3a3a',
+            border: '1px solid #525252',
+            borderRadius: '4px',
+            padding: '6px 10px',
+            color: '#d4d4d4',
+            fontSize: '12px',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+            zIndex: 10000,
+            maxWidth: '200px'
           }}
           onClick={(e) => e.stopPropagation()}
         >
           {filterType !== 'none' 
-            ? `${filterType === 'oil' ? 'Oil Paint' : 'Simplified'} filter applied`
+            ? `${filterType === 'oil' ? 'Oil Paint' : 'Simplified'}`
             : `${studyMode === 'grayscale' ? 'Grayscale' : 
                 studyMode === 'grouped' ? `Value Groups (${valueGroups})` :
-                studyMode === 'squint' ? `Squint View (${squintLevel}px)` :
-                studyMode === 'posterize' ? `Posterize (${valueGroups} levels)` : 'Original'} study mode`
+                studyMode === 'squint' ? `Squint (${squintLevel}px)` :
+                studyMode === 'posterize' ? `Posterize (${valueGroups})` : 'Original'}`
           }
         </div>
       )}
@@ -271,8 +273,7 @@ export function FullscreenModal({
           ref={canvasRef}
           style={{
             maxWidth: '100%',
-            maxHeight: '100%',
-            borderRadius: '8px'
+            maxHeight: '100%'
           }}
         />
       </div>
@@ -281,17 +282,18 @@ export function FullscreenModal({
       <div
         style={{
           position: 'fixed',
-          bottom: '20px',
+          bottom: '16px',
           left: '50%',
           transform: 'translateX(-50%)',
-          color: 'rgba(255, 255, 255, 0.7)',
-          fontSize: '14px',
+          color: '#9ca3af',
+          fontSize: '11px',
           textAlign: 'center',
-          zIndex: 10000
+          zIndex: 10000,
+          fontFamily: 'system-ui, -apple-system, sans-serif'
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        Press ESC or click outside to close
+        ESC to close
       </div>
     </div>
   )

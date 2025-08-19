@@ -266,139 +266,149 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
   }
 
   return (
-    <div className="canvas-container">
+    <div style={{ 
+      background: 'white', 
+      borderRadius: '4px', 
+      border: '1px solid #d1d5db',
+      padding: '16px'
+    }}>
       {/* Header */}
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column', 
-        gap: '16px', 
-        marginBottom: '24px',
-        paddingBottom: '16px',
-        borderBottom: '1px solid #e2e8f0'
+        gap: '12px', 
+        marginBottom: '16px',
+        paddingBottom: '12px',
+        borderBottom: '1px solid #e5e7eb'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ 
-            padding: '8px', 
-            background: 'linear-gradient(135deg, #dbeafe 0%, #f3e8ff 100%)', 
-            borderRadius: '8px' 
+            padding: '4px', 
+            backgroundColor: '#f3f4f6',
+            borderRadius: '3px' 
           }}>
-            <Palette style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
+            <Palette style={{ width: '16px', height: '16px', color: '#4b5563' }} />
           </div>
-          <span style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b' }}>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>
             Image Editor
           </span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
           {/* Filter Buttons */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             <button
             onClick={applySimpleFilter}
-            className={`${filterType === 'simplified' ? 'btn-active' : 'btn-secondary'}`}
             disabled={isProcessing}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '14px',
-              opacity: isProcessing ? '0.5' : '1',
-              ...(filterType === 'simplified' && {
-                background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-                boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)',
-                borderRadius: '0.5rem',
-                border: 'none',
-                color: 'white'
-              })
+              gap: '6px',
+              fontSize: '12px',
+              padding: '6px 10px',
+              backgroundColor: filterType === 'simplified' ? '#374151' : '#f3f4f6',
+              color: filterType === 'simplified' ? 'white' : '#374151',
+              border: '1px solid #d1d5db',
+              borderRadius: '3px',
+              cursor: 'pointer',
+              opacity: isProcessing ? '0.5' : '1'
             }}
           >
-            <Circle style={{ width: '16px', height: '16px' }} />
+            <Circle style={{ width: '12px', height: '12px' }} />
             {isProcessing && filterType === 'simplified' ? 'Processing...' : 'Simplified'}
           </button>
           <button
             onClick={applyOilFilter}
-            className={`${filterType === 'oil' ? 'btn-active' : 'btn-secondary'}`}
             disabled={isProcessing}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '14px',
-              opacity: isProcessing ? '0.5' : '1',
-              ...(filterType === 'oil' && {
-                background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
-                boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)',
-                borderRadius: '0.5rem',
-                border: 'none',
-                color: 'white'
-              })
+              gap: '6px',
+              fontSize: '12px',
+              padding: '6px 10px',
+              backgroundColor: filterType === 'oil' ? '#374151' : '#f3f4f6',
+              color: filterType === 'oil' ? 'white' : '#374151',
+              border: '1px solid #d1d5db',
+              borderRadius: '3px',
+              cursor: 'pointer',
+              opacity: isProcessing ? '0.5' : '1'
             }}
           >
-            <Sparkles style={{ width: '16px', height: '16px' }} />
+            <Sparkles style={{ width: '12px', height: '12px' }} />
             {isProcessing && filterType === 'oil' ? 'Processing...' : 'Oil Paint'}
           </button>
           <button
             onClick={toggleEyedropper}
-            className={`${isEyedropperActive ? 'btn-active' : 'btn-secondary'}`}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '14px',
-              ...(isEyedropperActive && {
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)',
-                borderRadius: '0.5rem',
-                border: 'none',
-                color: 'white'
-              })
+              gap: '6px',
+              fontSize: '12px',
+              padding: '6px 10px',
+              backgroundColor: isEyedropperActive ? '#374151' : '#f3f4f6',
+              color: isEyedropperActive ? 'white' : '#374151',
+              border: '1px solid #d1d5db',
+              borderRadius: '3px',
+              cursor: 'pointer'
             }}
           >
-            <Pipette style={{ width: '16px', height: '16px' }} />
+            <Pipette style={{ width: '12px', height: '12px' }} />
             Eyedropper
           </button>
           <button
             onClick={resetImage}
-            className="btn-secondary"
             disabled={!isFiltered}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '14px',
+              gap: '6px',
+              fontSize: '12px',
+              padding: '6px 10px',
+              backgroundColor: '#f3f4f6',
+              color: '#374151',
+              border: '1px solid #d1d5db',
+              borderRadius: '3px',
+              cursor: 'pointer',
               opacity: !isFiltered ? '0.5' : '1'
             }}
           >
-            <RotateCcw style={{ width: '16px', height: '16px' }} />
+            <RotateCcw style={{ width: '12px', height: '12px' }} />
             Reset
           </button>
           <button
             onClick={handleFullscreen}
-            className="btn-secondary"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '14px'
+              gap: '6px',
+              fontSize: '12px',
+              padding: '6px 10px',
+              backgroundColor: '#f3f4f6',
+              color: '#374151',
+              border: '1px solid #d1d5db',
+              borderRadius: '3px',
+              cursor: 'pointer'
             }}
             title="View fullscreen"
           >
-            <Maximize style={{ width: '16px', height: '16px' }} />
-            Fullscreen
+            <Maximize style={{ width: '12px', height: '12px' }} />
+            Full Screen
           </button>
           </div>
           
           {/* Study Mode Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             {/* Study Mode Dropdown */}
             <select 
               value={studyMode}
               onChange={(e) => setStudyMode(e.target.value)}
               style={{
-                padding: '8px 12px',
+                padding: '4px 8px',
                 border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
+                borderRadius: '3px',
+                fontSize: '12px',
                 background: 'white',
-                minWidth: '140px'
+                minWidth: '110px',
+                color: '#374151'
               }}
             >
               <option value="original">Original</option>
@@ -410,8 +420,8 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
             
             {/* Value Groups Control */}
             {(studyMode === 'grouped' || studyMode === 'posterize') && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <label style={{ fontSize: '12px', color: '#374151', whiteSpace: 'nowrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <label style={{ fontSize: '11px', color: '#6b7280', whiteSpace: 'nowrap' }}>
                   {studyMode === 'grouped' ? 'Groups' : 'Levels'}: {valueGroups}
                 </label>
                 <input
@@ -421,10 +431,10 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
                   value={valueGroups}
                   onChange={(e) => setValueGroups(Number(e.target.value))}
                   style={{
-                    width: '80px',
-                    height: '6px',
-                    borderRadius: '3px',
-                    background: '#e2e8f0',
+                    width: '60px',
+                    height: '4px',
+                    borderRadius: '2px',
+                    background: '#e5e7eb',
                     outline: 'none',
                     appearance: 'none',
                     WebkitAppearance: 'none',
@@ -437,8 +447,8 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
             
             {/* Squint Level Control */}
             {studyMode === 'squint' && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <label style={{ fontSize: '12px', color: '#374151', whiteSpace: 'nowrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <label style={{ fontSize: '11px', color: '#6b7280', whiteSpace: 'nowrap' }}>
                   Blur: {squintLevel}px
                 </label>
                 <input
@@ -448,10 +458,10 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
                   value={squintLevel}
                   onChange={(e) => setSquintLevel(Number(e.target.value))}
                   style={{
-                    width: '80px',
-                    height: '6px',
-                    borderRadius: '3px',
-                    background: '#e2e8f0',
+                    width: '60px',
+                    height: '4px',
+                    borderRadius: '2px',
+                    background: '#e5e7eb',
                     outline: 'none',
                     appearance: 'none',
                     WebkitAppearance: 'none',
@@ -468,9 +478,10 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
       {/* Canvas Area */}
       <div style={{ 
         position: 'relative', 
-        background: '#f8fafc', 
-        borderRadius: '12px', 
-        padding: '16px' 
+        background: '#f9fafb', 
+        borderRadius: '3px', 
+        padding: '12px',
+        border: '1px solid #e5e7eb'
       }}>
         <canvas
           ref={canvasRef}
@@ -478,9 +489,8 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
           style={{
             maxWidth: '100%',
             height: 'auto',
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            border: '1px solid #e2e8f0',
+            borderRadius: '2px',
+            border: '1px solid #d1d5db',
             display: 'block',
             margin: '0 auto',
             cursor: isEyedropperActive ? 'crosshair' : 'default',
@@ -494,17 +504,17 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
         {isEyedropperActive && (
           <div style={{
             position: 'absolute',
-            top: '24px',
-            left: '24px',
-            background: '#16a34a',
+            top: '16px',
+            left: '16px',
+            background: '#374151',
             color: 'white',
-            padding: '8px 12px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '500',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+            padding: '6px 10px',
+            borderRadius: '3px',
+            fontSize: '11px',
+            fontWeight: '400',
+            border: '1px solid #4b5563'
           }}>
-            🎯 Click on the image to sample color
+            Click image to sample color
           </div>
         )}
         {eyedropPosition && (
@@ -544,27 +554,26 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(255, 255, 255, 0.5)',
-            borderRadius: '12px'
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '3px'
           }}>
             <div style={{
               background: 'white',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              border: '1px solid #e2e8f0'
+              borderRadius: '3px',
+              padding: '8px 12px',
+              border: '1px solid #d1d5db'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '2px solid #3b82f6',
+                  width: '12px',
+                  height: '12px',
+                  border: '2px solid #6b7280',
                   borderTopColor: 'transparent',
                   borderRadius: '50%',
                   animation: 'spin 1s linear infinite'
                 }}></div>
-                <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>
-                  Applying filter...
+                <span style={{ fontSize: '12px', fontWeight: '400', color: '#374151' }}>
+                  Processing...
                 </span>
               </div>
             </div>
@@ -575,21 +584,21 @@ export function ImageCanvas({ image, onColorPick, onFullscreen }) {
       {/* Filter Status */}
       {(filterType !== 'none' || studyMode !== 'original') && (
         <div style={{
-          marginTop: '16px',
-          padding: '12px',
-          background: '#eff6ff',
-          borderRadius: '8px',
-          border: '1px solid #bfdbfe'
+          marginTop: '12px',
+          padding: '8px 10px',
+          background: '#f3f4f6',
+          borderRadius: '3px',
+          border: '1px solid #d1d5db'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#1e40af' }}>
-            <div style={{ width: '8px', height: '8px', background: '#3b82f6', borderRadius: '50%' }}></div>
-            <span style={{ fontWeight: '500' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4b5563' }}>
+            <div style={{ width: '4px', height: '4px', background: '#6b7280', borderRadius: '50%' }}></div>
+            <span style={{ fontWeight: '400' }}>
               {filterType !== 'none' 
-                ? `${filterType === 'oil' ? 'Oil Paint' : 'Simplified'} filter applied`
+                ? `${filterType === 'oil' ? 'Oil Paint' : 'Simplified'} filter active`
                 : `${studyMode === 'grayscale' ? 'Grayscale' : 
                       studyMode === 'grouped' ? 'Value Groups' :
                       studyMode === 'squint' ? 'Squint View' :
-                      studyMode === 'posterize' ? 'Posterize' : 'Original'} study mode active`
+                      studyMode === 'posterize' ? 'Posterize' : 'Original'} study mode`
               }
             </span>
           </div>

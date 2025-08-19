@@ -78,7 +78,7 @@ export function AnalysisTabs({
       label: 'Saved',
       icon: BookOpen,
       component: (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <SavedColors 
             savedColors={savedColors}
             onRemoveColor={onRemoveColor}
@@ -88,29 +88,29 @@ export function AnalysisTabs({
           {/* Analysis Results Summary */}
           {(valueAnalysis || savedHarmonies.length > 0) && (
             <div style={{ 
-              background: 'white', 
-              borderRadius: '12px', 
-              padding: '20px', 
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+              background: '#f9fafb', 
+              borderRadius: '3px', 
+              padding: '12px', 
+              border: '1px solid #e5e7eb'
             }}>
-              <h3 style={{ fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>
+              <h3 style={{ fontWeight: '500', color: '#111827', marginBottom: '12px', fontSize: '13px' }}>
                 Analysis Summary
               </h3>
               
               {/* Value Analysis Results */}
               {valueAnalysis && (
                 <div style={{ 
-                  background: '#f8fafc',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  marginBottom: '16px',
-                  fontSize: '12px'
+                  background: 'white',
+                  borderRadius: '3px',
+                  padding: '8px',
+                  marginBottom: '12px',
+                  fontSize: '11px',
+                  border: '1px solid #e5e7eb'
                 }}>
-                  <div style={{ fontWeight: '600', marginBottom: '8px', color: '#1e293b' }}>
+                  <div style={{ fontWeight: '500', marginBottom: '6px', color: '#111827' }}>
                     Value Analysis:
                   </div>
-                  <div style={{ color: '#374151' }}>
+                  <div style={{ color: '#6b7280' }}>
                     <div>Range: {valueAnalysis.darkest} → {valueAnalysis.lightest} (Contrast: {valueAnalysis.contrast}%)</div>
                     <div>Average: {valueAnalysis.average} • Median: {valueAnalysis.median}</div>
                   </div>
@@ -120,17 +120,18 @@ export function AnalysisTabs({
               {/* Saved Harmonies */}
               {savedHarmonies.length > 0 && (
                 <div style={{ 
-                  background: '#f8fafc',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  fontSize: '12px'
+                  background: 'white',
+                  borderRadius: '3px',
+                  padding: '8px',
+                  fontSize: '11px',
+                  border: '1px solid #e5e7eb'
                 }}>
-                  <div style={{ fontWeight: '600', marginBottom: '8px', color: '#1e293b' }}>
+                  <div style={{ fontWeight: '500', marginBottom: '6px', color: '#111827' }}>
                     Color Harmonies ({savedHarmonies.length}):
                   </div>
-                  <div style={{ color: '#374151' }}>
+                  <div style={{ color: '#6b7280' }}>
                     {savedHarmonies.map((harmony, index) => (
-                      <div key={harmony.id} style={{ marginBottom: '4px' }}>
+                      <div key={harmony.id} style={{ marginBottom: '3px' }}>
                         {index + 1}. {harmony.type} ({harmony.colors.length} colors)
                       </div>
                     ))}
@@ -149,16 +150,15 @@ export function AnalysisTabs({
   return (
     <div style={{ 
       background: 'white', 
-      borderRadius: '12px', 
-      border: '1px solid #e2e8f0',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+      borderRadius: '4px', 
+      border: '1px solid #d1d5db',
       overflow: 'hidden'
     }}>
       {/* Tab Navigation */}
       <div style={{ 
         display: 'flex', 
-        borderBottom: '1px solid #e2e8f0',
-        background: '#f8fafc'
+        borderBottom: '1px solid #e5e7eb',
+        background: '#f9fafb'
       }}>
         {tabs.map((tab) => {
           const Icon = tab.icon
@@ -170,24 +170,24 @@ export function AnalysisTabs({
               onClick={() => setActiveTab(tab.id)}
               style={{
                 flex: 1,
-                padding: '12px 8px',
+                padding: '10px 8px',
                 border: 'none',
                 background: isActive ? 'white' : 'transparent',
-                borderBottom: isActive ? '2px solid #3b82f6' : '2px solid transparent',
-                color: isActive ? '#1e293b' : '#64748b',
-                fontWeight: isActive ? '600' : '500',
-                fontSize: '14px',
+                borderBottom: isActive ? '2px solid #374151' : '2px solid transparent',
+                color: isActive ? '#111827' : '#6b7280',
+                fontWeight: isActive ? '500' : '400',
+                fontSize: '11px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '6px',
-                transition: 'all 0.2s ease',
+                gap: '4px',
+                transition: 'all 0.15s ease',
                 position: 'relative',
-                minHeight: '48px'
+                minHeight: '36px'
               }}
             >
-              <Icon style={{ width: '16px', height: '16px' }} />
+              <Icon style={{ width: '12px', height: '12px' }} />
               <span className="tab-label">
                 {tab.label}
               </span>
@@ -197,7 +197,7 @@ export function AnalysisTabs({
       </div>
       
       {/* Tab Content */}
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: '16px' }}>
         {activeTabData?.component}
       </div>
     </div>
