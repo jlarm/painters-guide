@@ -1,10 +1,10 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Palette, Pipette, RotateCcw, Sparkles, Circle, Eye } from 'lucide-react'
+import { Palette, Pipette, RotateCcw, Sparkles, Circle, Eye, Maximize } from 'lucide-react'
 import { applyOilPaintingFilter, applySimplifiedFilter, analyzeColor } from '@/utils/imageFilters'
 
-export function ImageCanvas({ image, onColorPick }) {
+export function ImageCanvas({ image, onColorPick, onFullscreen }) {
   const canvasRef = useRef(null)
   const originalCanvasRef = useRef(null)
   const [isFiltered, setIsFiltered] = useState(false)
@@ -36,8 +36,8 @@ export function ImageCanvas({ image, onColorPick }) {
     const originalCanvas = originalCanvasRef.current
     if (!canvas || !originalCanvas) return
 
-    const ctx = canvas.getContext('2d')
-    const originalCtx = originalCanvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true })
     
     // Calculate dimensions to fit canvas while maintaining aspect ratio
     const maxWidth = 1000
@@ -79,8 +79,8 @@ export function ImageCanvas({ image, onColorPick }) {
     await new Promise(resolve => setTimeout(resolve, 100))
 
     // Copy original image back first
-    const ctx = canvas.getContext('2d')
-    const originalCtx = originalCanvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true })
     const originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height)
     ctx.putImageData(originalImageData, 0, 0)
     
@@ -102,8 +102,8 @@ export function ImageCanvas({ image, onColorPick }) {
     await new Promise(resolve => setTimeout(resolve, 100))
 
     // Copy original image back first
-    const ctx = canvas.getContext('2d')
-    const originalCtx = originalCanvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true })
     const originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height)
     ctx.putImageData(originalImageData, 0, 0)
     
@@ -119,8 +119,8 @@ export function ImageCanvas({ image, onColorPick }) {
     const originalCanvas = originalCanvasRef.current
     if (!canvas || !originalCanvas) return
 
-    const ctx = canvas.getContext('2d')
-    const originalCtx = originalCanvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true })
     const originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height)
     ctx.putImageData(originalImageData, 0, 0)
     
@@ -137,8 +137,8 @@ export function ImageCanvas({ image, onColorPick }) {
     const originalCanvas = originalCanvasRef.current
     if (!canvas || !originalCanvas) return
 
-    const ctx = canvas.getContext('2d')
-    const originalCtx = originalCanvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true })
     const originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height)
     ctx.putImageData(originalImageData, 0, 0)
   }
@@ -179,8 +179,8 @@ export function ImageCanvas({ image, onColorPick }) {
     const originalCanvas = originalCanvasRef.current
     if (!canvas || !originalCanvas) return
 
-    const ctx = canvas.getContext('2d')
-    const originalCtx = originalCanvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true })
     
     const imageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height)
     const data = imageData.data
@@ -228,7 +228,7 @@ export function ImageCanvas({ image, onColorPick }) {
     const displayY = e.clientY - containerRect.top
     setEyedropPosition({ x: displayX, y: displayY })
     
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
     const imageData = ctx.getImageData(x, y, 1, 1)
     const [r, g, b] = imageData.data
     
@@ -240,6 +240,18 @@ export function ImageCanvas({ image, onColorPick }) {
 
   const toggleEyedropper = () => {
     setIsEyedropperActive(!isEyedropperActive)
+  }
+
+  const handleFullscreen = () => {
+    if (onFullscreen) {
+      onFullscreen({
+        image: image,
+        filterType,
+        studyMode,
+        valueGroups,
+        squintLevel
+      })
+    }
   }
 
   if (!image) {
@@ -357,6 +369,20 @@ export function ImageCanvas({ image, onColorPick }) {
           >
             <RotateCcw style={{ width: '16px', height: '16px' }} />
             Reset
+          </button>
+          <button
+            onClick={handleFullscreen}
+            className="btn-secondary"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '14px'
+            }}
+            title="View fullscreen"
+          >
+            <Maximize style={{ width: '16px', height: '16px' }} />
+            Fullscreen
           </button>
           </div>
           

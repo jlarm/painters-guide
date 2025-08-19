@@ -3,6 +3,7 @@ import { ImageUpload } from '@/components/ImageUpload'
 import { ImageCanvas } from '@/components/ImageCanvas'
 import { AnalysisTabs } from '@/components/AnalysisTabs'
 import { HelpGuide } from '@/components/HelpGuide'
+import { FullscreenModal } from '@/components/FullscreenModal'
 import { Palette, Brush, Pipette, Image, HelpCircle } from 'lucide-react'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
   const [savedHarmonies, setSavedHarmonies] = useState([])
   const [valueAnalysis, setValueAnalysis] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
+  const [fullscreenData, setFullscreenData] = useState(null)
 
   const handleImageLoad = (img, dataUrl) => {
     setImageElement(img)
@@ -52,6 +54,14 @@ function App() {
 
   const handleValueAnalysis = (analysis) => {
     setValueAnalysis(analysis)
+  }
+
+  const handleFullscreen = (data) => {
+    setFullscreenData(data)
+  }
+
+  const closeFullscreen = () => {
+    setFullscreenData(null)
   }
 
   return (
@@ -205,6 +215,7 @@ function App() {
                 <ImageCanvas 
                   image={imageElement} 
                   onColorPick={handleColorPick}
+                  onFullscreen={handleFullscreen}
                 />
               </div>
 
@@ -272,6 +283,15 @@ function App() {
       </main>
       
       <HelpGuide isOpen={showHelp} onClose={() => setShowHelp(false)} />
+      <FullscreenModal
+        isOpen={!!fullscreenData}
+        onClose={closeFullscreen}
+        image={fullscreenData?.image}
+        filterType={fullscreenData?.filterType}
+        studyMode={fullscreenData?.studyMode}
+        valueGroups={fullscreenData?.valueGroups}
+        squintLevel={fullscreenData?.squintLevel}
+      />
     </div>
   )
 }
