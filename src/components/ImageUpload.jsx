@@ -6,17 +6,18 @@ import { Upload, X, Image as ImageIcon, Replace } from 'lucide-react'
 export function ImageUpload({ onImageLoad, image, compact = false }) {
   const [dragActive, setDragActive] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [debugMessage, setDebugMessage] = useState('')
   const fileInputRef = useRef(null)
 
   const handleInputChange = (e) => {
-    console.log('Standard file input change triggered', e.target.files)
+    setDebugMessage('Standard input change triggered')
     e.preventDefault()
     
     // Prevent duplicate processing
     if (isProcessing) return
     
     if (e.target.files && e.target.files[0]) {
-      console.log('Processing file:', e.target.files[0].name)
+      setDebugMessage(`Processing file: ${e.target.files[0].name}`)
       setIsProcessing(true)
       handleFile(e.target.files[0])
       
@@ -26,9 +27,11 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
           e.target.value = ''
         }
         setIsProcessing(false)
-      }, 100)
+        setDebugMessage('')
+      }, 2000)
     } else {
-      console.log('No file selected or files array empty')
+      setDebugMessage('No file selected or files array empty')
+      setTimeout(() => setDebugMessage(''), 3000)
     }
   }
 
@@ -71,10 +74,12 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
 
     // Check if we're on iOS Safari
     const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-    console.log('Opening file dialog, iOS Safari detected:', isIOSSafari)
-    console.log('User agent:', navigator.userAgent)
+    const userAgent = navigator.userAgent.substring(0, 100) // Truncate for display
+    setDebugMessage(`iOS Safari: ${isIOSSafari}. UA: ${userAgent}`)
 
     if (isIOSSafari) {
+      setDebugMessage('Creating iOS input element...')
+      
       // For iOS Safari, create a new input element and add it to DOM
       const input = document.createElement('input')
       input.type = 'file'
@@ -85,14 +90,24 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       input.style.pointerEvents = 'none'
 
       const handleIOSChange = (e) => {
-        console.log('iOS Safari file change triggered', e.target.files)
         if (e.target.files && e.target.files[0]) {
+          setDebugMessage(`iOS file selected: ${e.target.files[0].name}`)
           setIsProcessing(true)
           handleFile(e.target.files[0])
-          setTimeout(() => setIsProcessing(false), 100)
+          setTimeout(() => {
+            setIsProcessing(false)
+            setDebugMessage('')
+          }, 2000)
+        } else {
+          setDebugMessage('iOS: No file selected')
+          setTimeout(() => setDebugMessage(''), 3000)
         }
         // Clean up
-        document.body.removeChild(input)
+        try {
+          document.body.removeChild(input)
+        } catch (err) {
+          // Input might already be removed
+        }
       }
 
       // Add event listener before adding to DOM
@@ -101,12 +116,15 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       
       // Add to DOM and trigger click
       document.body.appendChild(input)
+      setDebugMessage('iOS input added to DOM, clicking...')
       input.click()
     } else {
+      setDebugMessage('Using standard file input...')
       // Standard desktop/Android behavior
       if (fileInputRef.current) {
         fileInputRef.current.click()
       }
+      setTimeout(() => setDebugMessage(''), 2000)
     }
   }, [isProcessing, handleFile])
 
@@ -120,6 +138,20 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
   if (compact) {
     return (
       <div>
+        {debugMessage && (
+          <div style={{
+            background: '#fef3c7',
+            border: '1px solid #f59e0b',
+            borderRadius: '4px',
+            padding: '6px',
+            marginBottom: '8px',
+            fontSize: '10px',
+            color: '#92400e',
+            wordBreak: 'break-all'
+          }}>
+            {debugMessage}
+          </div>
+        )}
         <button 
           onClick={openFileDialog}
           style={{ 
@@ -195,22 +227,37 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
           </button>
         </div>
       ) : (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '32px 16px',
-            border: dragActive ? '2px dashed #6b7280' : '2px dashed #d1d5db',
-            borderRadius: '4px',
-            backgroundColor: dragActive ? '#f9fafb' : '#ffffff',
-            transition: 'all 0.2s ease',
-            cursor: 'pointer'
-          }}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          onClick={openFileDialog}
-        >
+        <div>
+          {debugMessage && (
+            <div style={{
+              background: '#fef3c7',
+              border: '1px solid #f59e0b',
+              borderRadius: '4px',
+              padding: '8px',
+              marginBottom: '16px',
+              fontSize: '12px',
+              color: '#92400e',
+              wordBreak: 'break-all'
+            }}>
+              Debug: {debugMessage}
+            </div>
+          )}
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '32px 16px',
+              border: dragActive ? '2px dashed #6b7280' : '2px dashed #d1d5db',
+              borderRadius: '4px',
+              backgroundColor: dragActive ? '#f9fafb' : '#ffffff',
+              transition: 'all 0.2s ease',
+              cursor: 'pointer'
+            }}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+            onClick={openFileDialog}
+          >
           <div style={{ 
             display: 'inline-flex',
             padding: '8px', 
@@ -269,6 +316,7 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
             color: '#9ca3af' 
           }}>
             Max 10MB • Best results with high resolution images
+          </div>
           </div>
         </div>
       )}
