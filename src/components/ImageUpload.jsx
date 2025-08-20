@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Upload, X, Image as ImageIcon, Replace } from 'lucide-react'
@@ -6,6 +6,40 @@ import { Upload, X, Image as ImageIcon, Replace } from 'lucide-react'
 export function ImageUpload({ onImageLoad, image, compact = false }) {
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
+
+  // Add event listener for iPad Safari compatibility
+  useEffect(() => {
+    const fileInput = fileInputRef.current
+    if (fileInput) {
+      const handleChangeEvent = (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFile(e.target.files[0])
+        }
+        e.target.value = ''
+      }
+
+      // Use addEventListener instead of onChange prop for better iOS Safari support
+      fileInput.addEventListener('change', handleChangeEvent)
+      
+      return () => {
+        fileInput.removeEventListener('change', handleChangeEvent)
+      }
+    }
+  }, [])
+
+  const handleFile = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const img = new Image()
+        img.onload = () => {
+          onImageLoad(img, e.target.result)
+        }
+        img.src = e.target.result
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   const handleDrag = (e) => {
     e.preventDefault()
@@ -24,27 +58,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFile(e.dataTransfer.files[0])
-    }
-  }
-
-  const handleChange = (e) => {
-    e.preventDefault()
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files[0])
-    }
-  }
-
-  const handleFile = (file) => {
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const img = new Image()
-        img.onload = () => {
-          onImageLoad(img, e.target.result)
-        }
-        img.src = e.target.result
-      }
-      reader.readAsDataURL(file)
     }
   }
 
@@ -86,8 +99,7 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          onChange={handleChange}
-          style={{ display: 'none' }}
+          style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
         />
       </div>
     )
@@ -202,8 +214,7 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handleChange}
-            style={{ display: 'none' }}
+            style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
           />
           <div style={{ 
             marginTop: '16px', 
