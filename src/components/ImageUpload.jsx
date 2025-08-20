@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Upload, X, Image as ImageIcon, Replace } from 'lucide-react'
@@ -9,12 +9,14 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
   const fileInputRef = useRef(null)
 
   const handleInputChange = (e) => {
+    console.log('Standard file input change triggered', e.target.files)
     e.preventDefault()
     
     // Prevent duplicate processing
     if (isProcessing) return
     
     if (e.target.files && e.target.files[0]) {
+      console.log('Processing file:', e.target.files[0].name)
       setIsProcessing(true)
       handleFile(e.target.files[0])
       
@@ -25,10 +27,12 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
         }
         setIsProcessing(false)
       }, 100)
+    } else {
+      console.log('No file selected or files array empty')
     }
   }
 
-  const handleFile = (file) => {
+  const handleFile = useCallback((file) => {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -40,7 +44,7 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       }
       reader.readAsDataURL(file)
     }
-  }
+  }, [onImageLoad])
 
   const handleDrag = (e) => {
     e.preventDefault()
@@ -62,11 +66,49 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
     }
   }
 
-  const openFileDialog = () => {
-    if (!isProcessing && fileInputRef.current) {
-      fileInputRef.current.click()
+  const openFileDialog = useCallback(() => {
+    if (isProcessing) return
+
+    // Check if we're on iOS Safari
+    const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+    console.log('Opening file dialog, iOS Safari detected:', isIOSSafari)
+    console.log('User agent:', navigator.userAgent)
+
+    if (isIOSSafari) {
+      // For iOS Safari, create a new input element and add it to DOM
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = 'image/jpeg,image/jpg,image/png'
+      input.style.position = 'absolute'
+      input.style.left = '-9999px'
+      input.style.opacity = '0'
+      input.style.pointerEvents = 'none'
+
+      const handleIOSChange = (e) => {
+        console.log('iOS Safari file change triggered', e.target.files)
+        if (e.target.files && e.target.files[0]) {
+          setIsProcessing(true)
+          handleFile(e.target.files[0])
+          setTimeout(() => setIsProcessing(false), 100)
+        }
+        // Clean up
+        document.body.removeChild(input)
+      }
+
+      // Add event listener before adding to DOM
+      input.addEventListener('change', handleIOSChange)
+      input.addEventListener('input', handleIOSChange)
+      
+      // Add to DOM and trigger click
+      document.body.appendChild(input)
+      input.click()
+    } else {
+      // Standard desktop/Android behavior
+      if (fileInputRef.current) {
+        fileInputRef.current.click()
+      }
     }
-  }
+  }, [isProcessing, handleFile])
 
   const clearImage = () => {
     onImageLoad(null, null)
