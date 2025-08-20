@@ -7,22 +7,32 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
 
+  const handleInputChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0])
+    }
+    // Reset the input value to ensure change event fires again
+    e.target.value = ''
+  }
+
   // Add event listener for iPad Safari compatibility
   useEffect(() => {
     const fileInput = fileInputRef.current
     if (fileInput) {
-      const handleChangeEvent = (e) => {
+      // Add both input and change events for better iOS Safari support
+      const handleEvent = (e) => {
         if (e.target.files && e.target.files[0]) {
           handleFile(e.target.files[0])
         }
         e.target.value = ''
       }
 
-      // Use addEventListener instead of onChange prop for better iOS Safari support
-      fileInput.addEventListener('change', handleChangeEvent)
+      fileInput.addEventListener('change', handleEvent, { passive: false })
+      fileInput.addEventListener('input', handleEvent, { passive: false })
       
       return () => {
-        fileInput.removeEventListener('change', handleChangeEvent)
+        fileInput.removeEventListener('change', handleEvent)
+        fileInput.removeEventListener('input', handleEvent)
       }
     }
   }, [])
@@ -98,7 +108,9 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/jpg,image/png"
+          onChange={handleInputChange}
+          capture="environment"
           style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
         />
       </div>
@@ -213,7 +225,9 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png"
+            onChange={handleInputChange}
+            capture="environment"
             style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
           />
           <div style={{ 
