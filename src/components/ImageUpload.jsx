@@ -89,28 +89,68 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       input.style.opacity = '0'
       input.style.pointerEvents = 'none'
 
+      let hasProcessedFile = false
+      let pollCount = 0
+      const maxPolls = 50 // Poll for up to 10 seconds
+
       const handleIOSChange = (e) => {
+        if (hasProcessedFile) return
+        
         if (e.target.files && e.target.files[0]) {
-          setDebugMessage(`iOS file selected: ${e.target.files[0].name}`)
+          hasProcessedFile = true
+          setDebugMessage(`iOS file selected via event: ${e.target.files[0].name}`)
           setIsProcessing(true)
           handleFile(e.target.files[0])
           setTimeout(() => {
             setIsProcessing(false)
             setDebugMessage('')
           }, 2000)
-        } else {
-          setDebugMessage('iOS: No file selected')
-          setTimeout(() => setDebugMessage(''), 3000)
+          cleanup()
         }
-        // Clean up
+      }
+
+      // Polling fallback for when change event doesn't fire
+      const pollForFile = () => {
+        pollCount++
+        setDebugMessage(`Polling for file selection... (${pollCount}/${maxPolls})`)
+        
+        if (hasProcessedFile) {
+          return // Already processed
+        }
+        
+        if (input.files && input.files[0]) {
+          hasProcessedFile = true
+          setDebugMessage(`iOS file found via polling: ${input.files[0].name}`)
+          setIsProcessing(true)
+          handleFile(input.files[0])
+          setTimeout(() => {
+            setIsProcessing(false)
+            setDebugMessage('')
+          }, 2000)
+          cleanup()
+          return
+        }
+        
+        if (pollCount < maxPolls) {
+          setTimeout(pollForFile, 200) // Poll every 200ms
+        } else {
+          setDebugMessage('iOS: Timeout - no file selected')
+          setTimeout(() => setDebugMessage(''), 3000)
+          cleanup()
+        }
+      }
+
+      const cleanup = () => {
         try {
-          document.body.removeChild(input)
+          if (document.body.contains(input)) {
+            document.body.removeChild(input)
+          }
         } catch (err) {
           // Input might already be removed
         }
       }
 
-      // Add event listener before adding to DOM
+      // Add event listeners
       input.addEventListener('change', handleIOSChange)
       input.addEventListener('input', handleIOSChange)
       
@@ -118,6 +158,13 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       document.body.appendChild(input)
       setDebugMessage('iOS input added to DOM, clicking...')
       input.click()
+
+      // Start polling as fallback
+      setTimeout(() => {
+        if (!hasProcessedFile) {
+          pollForFile()
+        }
+      }, 1000) // Wait 1 second before starting to poll
     } else {
       setDebugMessage('Using standard file input...')
       // Standard desktop/Android behavior
