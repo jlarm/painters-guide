@@ -1,41 +1,32 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Upload, X, Image as ImageIcon, Replace } from 'lucide-react'
 
 export function ImageUpload({ onImageLoad, image, compact = false }) {
   const [dragActive, setDragActive] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const fileInputRef = useRef(null)
 
   const handleInputChange = (e) => {
+    e.preventDefault()
+    
+    // Prevent duplicate processing
+    if (isProcessing) return
+    
     if (e.target.files && e.target.files[0]) {
+      setIsProcessing(true)
       handleFile(e.target.files[0])
-    }
-    // Reset the input value to ensure change event fires again
-    e.target.value = ''
-  }
-
-  // Add event listener for iPad Safari compatibility
-  useEffect(() => {
-    const fileInput = fileInputRef.current
-    if (fileInput) {
-      // Add both input and change events for better iOS Safari support
-      const handleEvent = (e) => {
-        if (e.target.files && e.target.files[0]) {
-          handleFile(e.target.files[0])
-        }
-        e.target.value = ''
-      }
-
-      fileInput.addEventListener('change', handleEvent, { passive: false })
-      fileInput.addEventListener('input', handleEvent, { passive: false })
       
-      return () => {
-        fileInput.removeEventListener('change', handleEvent)
-        fileInput.removeEventListener('input', handleEvent)
-      }
+      // Clear the input value for consistent behavior across browsers
+      setTimeout(() => {
+        if (e.target) {
+          e.target.value = ''
+        }
+        setIsProcessing(false)
+      }, 100)
     }
-  }, [])
+  }
 
   const handleFile = (file) => {
     if (file && file.type.startsWith('image/')) {
@@ -72,7 +63,9 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
   }
 
   const openFileDialog = () => {
-    fileInputRef.current?.click()
+    if (!isProcessing && fileInputRef.current) {
+      fileInputRef.current.click()
+    }
   }
 
   const clearImage = () => {
@@ -110,7 +103,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
           type="file"
           accept="image/jpeg,image/jpg,image/png"
           onChange={handleInputChange}
-          capture="environment"
           style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
         />
       </div>
@@ -227,7 +219,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
             type="file"
             accept="image/jpeg,image/jpg,image/png"
             onChange={handleInputChange}
-            capture="environment"
             style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
           />
           <div style={{ 
