@@ -179,7 +179,7 @@ export function ValueStudies({ image, onValueAnalysis }) {
         onValueAnalysis(analysisResult)
       }
     } catch (error) {
-      console.error('Error analyzing values:', error)
+      // Error analyzing values
     } finally {
       setIsAnalyzing(false)
     }

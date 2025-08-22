@@ -94,7 +94,7 @@ export function PaintRecommendations({ imageElement, selectedColor, valueAnalysi
       
       setImageAnalysis(analysis)
     } catch (error) {
-      console.error('Error analyzing image temperature:', error)
+      // Silently handle analysis errors
     } finally {
       setIsAnalyzing(false)
     }

@@ -6,18 +6,15 @@ import { Upload, X, Image as ImageIcon, Replace } from 'lucide-react'
 export function ImageUpload({ onImageLoad, image, compact = false }) {
   const [dragActive, setDragActive] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [debugMessage, setDebugMessage] = useState('')
   const fileInputRef = useRef(null)
 
   const handleInputChange = (e) => {
-    setDebugMessage('Standard input change triggered')
     e.preventDefault()
     
     // Prevent duplicate processing
     if (isProcessing) return
     
     if (e.target.files && e.target.files[0]) {
-      setDebugMessage(`Processing file: ${e.target.files[0].name}`)
       setIsProcessing(true)
       handleFile(e.target.files[0])
       
@@ -27,11 +24,8 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
           e.target.value = ''
         }
         setIsProcessing(false)
-        setDebugMessage('')
       }, 2000)
     } else {
-      setDebugMessage('No file selected or files array empty')
-      setTimeout(() => setDebugMessage(''), 3000)
     }
   }
 
@@ -74,11 +68,8 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
 
     // Check if we're on iOS Safari
     const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-    const userAgent = navigator.userAgent.substring(0, 100) // Truncate for display
-    setDebugMessage(`iOS Safari: ${isIOSSafari}. UA: ${userAgent}`)
 
     if (isIOSSafari) {
-      setDebugMessage('Creating iOS input element...')
       
       // For iOS Safari, create a new input element and add it to DOM
       const input = document.createElement('input')
@@ -98,13 +89,11 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
         
         if (e.target.files && e.target.files[0]) {
           hasProcessedFile = true
-          setDebugMessage(`iOS file selected via event: ${e.target.files[0].name}`)
           setIsProcessing(true)
           handleFile(e.target.files[0])
           setTimeout(() => {
             setIsProcessing(false)
-            setDebugMessage('')
-          }, 2000)
+              }, 2000)
           cleanup()
         }
       }
@@ -112,7 +101,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       // Polling fallback for when change event doesn't fire
       const pollForFile = () => {
         pollCount++
-        setDebugMessage(`Polling for file selection... (${pollCount}/${maxPolls})`)
         
         if (hasProcessedFile) {
           return // Already processed
@@ -120,13 +108,11 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
         
         if (input.files && input.files[0]) {
           hasProcessedFile = true
-          setDebugMessage(`iOS file found via polling: ${input.files[0].name}`)
           setIsProcessing(true)
           handleFile(input.files[0])
           setTimeout(() => {
             setIsProcessing(false)
-            setDebugMessage('')
-          }, 2000)
+              }, 2000)
           cleanup()
           return
         }
@@ -134,8 +120,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
         if (pollCount < maxPolls) {
           setTimeout(pollForFile, 200) // Poll every 200ms
         } else {
-          setDebugMessage('iOS: Timeout - no file selected')
-          setTimeout(() => setDebugMessage(''), 3000)
           cleanup()
         }
       }
@@ -156,7 +140,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
       
       // Add to DOM and trigger click
       document.body.appendChild(input)
-      setDebugMessage('iOS input added to DOM, clicking...')
       input.click()
 
       // Start polling as fallback
@@ -166,12 +149,10 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
         }
       }, 1000) // Wait 1 second before starting to poll
     } else {
-      setDebugMessage('Using standard file input...')
       // Standard desktop/Android behavior
       if (fileInputRef.current) {
         fileInputRef.current.click()
       }
-      setTimeout(() => setDebugMessage(''), 2000)
     }
   }, [isProcessing, handleFile])
 
@@ -185,20 +166,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
   if (compact) {
     return (
       <div>
-        {debugMessage && (
-          <div style={{
-            background: '#fef3c7',
-            border: '1px solid #f59e0b',
-            borderRadius: '4px',
-            padding: '6px',
-            marginBottom: '8px',
-            fontSize: '10px',
-            color: '#92400e',
-            wordBreak: 'break-all'
-          }}>
-            {debugMessage}
-          </div>
-        )}
         <button 
           onClick={openFileDialog}
           style={{ 
@@ -275,20 +242,6 @@ export function ImageUpload({ onImageLoad, image, compact = false }) {
         </div>
       ) : (
         <div>
-          {debugMessage && (
-            <div style={{
-              background: '#fef3c7',
-              border: '1px solid #f59e0b',
-              borderRadius: '4px',
-              padding: '8px',
-              marginBottom: '16px',
-              fontSize: '12px',
-              color: '#92400e',
-              wordBreak: 'break-all'
-            }}>
-              Debug: {debugMessage}
-            </div>
-          )}
           <div
             style={{
               textAlign: 'center',
